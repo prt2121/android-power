@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+
+    <string name="app_name">PowerUsageSummary</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- battery -->
+    <string name="power_idle">Phone idle</string>
+    <string name="power_cell">Cell standby</string>
+    <string name="power_phone">Voice calls</string>
+    <string name="power_wifi">Wi-Fi</string>
+    <string name="power_bluetooth">Bluetooth</string>
+    <string name="power_screen">Display</string>
+    <string name="power_flashlight">Flashlight</string>
+    <string name="running_process_item_user_label">User: <xliff:g id="user_name">%1$s</xliff:g></string>
+    <string name="running_process_item_removed_user_label">Removed user</string>
+    <string name="power_unaccounted">Miscellaneous</string>
+    <string name="power_overcounted">Over-counted</string>
+    <string name="process_kernel_label">"Android OS"</string>
+    <string name="process_mediaserver_label">"Media server"</string>
+
+
+</resources>
