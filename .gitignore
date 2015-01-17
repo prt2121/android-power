@@ -32,3 +32,4 @@ proguard/
 .idea
 
 google_maps_api.xml
+NavMap/app/src/main/res/values/google_maps_api.xml
