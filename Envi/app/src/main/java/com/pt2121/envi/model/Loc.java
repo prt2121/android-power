@@ -25,10 +25,13 @@
 
 package com.pt2121.envi.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by prt2121 on 9/27/14.
  */
-public class Loc {
+public class Loc implements Parcelable {
 
     public final String name;
 
@@ -38,18 +41,60 @@ public class Loc {
 
     public final double longitude;
 
-    //LocType
+    /**
+     * @see com.pt2121.envi.model.LocType
+     */
     public final int type;
 
     public String image;
 
     public Loc(String name, String address, double latitude, double longitude, int type) {
+        this(name, address, latitude, longitude, type, null);
+    }
+
+    public Loc(String name, String address, double latitude, double longitude, int type,
+            String image) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.type = type;
+        this.image = image;
     }
+
+    private Loc(Parcel in) {
+        name = in.readString();
+        address = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        type = in.readInt();
+        image = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(address);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeInt(type);
+        dest.writeString(image);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Loc createFromParcel(Parcel in) {
+            return new Loc(in);
+        }
+
+        public Loc[] newArray(int size) {
+            return new Loc[size];
+        }
+    };
 
     public static class Builder {
 
