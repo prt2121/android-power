@@ -23,17 +23,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.binlocation;
 
 import android.app.Application;
-import android.test.ApplicationTestCase;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 9/27/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+@Module
+public class BinLocationModule {
 
-    public ApplicationTest() {
-        super(Application.class);
+    @Provides
+    @Singleton
+    public IFindBin provideNycBinLocation(Application app) {
+        return new NycBinLocation(app);
     }
+
 }

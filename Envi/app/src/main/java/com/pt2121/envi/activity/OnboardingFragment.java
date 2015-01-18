@@ -23,17 +23,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.activity;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.pt2121.envi.R;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 11/25/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class OnboardingFragment extends Fragment {
 
-    public ApplicationTest() {
-        super(Application.class);
+    public static final String ARG_POSITION = "position";
+
+    public static OnboardingFragment newInstance(int position) {
+        OnboardingFragment f = new OnboardingFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_POSITION, position);
+        f.setArguments(args);
+        return f;
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.view_onboarding, container, false);
+        Bundle args = getArguments();
+        ((TextView) rootView.findViewById(R.id.onboardingTextView)).setText(
+                "Onboarding " +
+                        Integer.toString(args.getInt(ARG_POSITION)));
+        return rootView;
+    }
+
 }

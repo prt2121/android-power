@@ -25,15 +25,21 @@
 
 package com.pt2121.envi;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/6/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class SharedPreferencesHelperFactory {
 
-    public ApplicationTest() {
-        super(Application.class);
+    private static boolean testing = false;
+
+    private static ISharedPreferencesHelper mSharedPreferencesHelper = null;
+
+    public static ISharedPreferencesHelper get() {
+        if (mSharedPreferencesHelper == null) {
+            mSharedPreferencesHelper = testing ? new MockSharedPreferencesHelper()
+                    : new SharedPreferencesHelper();
+        }
+        return mSharedPreferencesHelper;
     }
+
 }

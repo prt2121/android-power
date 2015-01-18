@@ -25,15 +25,33 @@
 
 package com.pt2121.envi;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.google.gson.Gson;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.location.Location;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 1/1/15.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class Utils {
 
-    public ApplicationTest() {
-        super(Application.class);
+    public static void saveUserLocationToPreference(Context context, Location location) {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_user_location), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(location);
+        editor.putString(context.getString(R.string.user_location), json);
+        editor.apply();
     }
+
+    public static Location getUserLocationFromPreference(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_user_location), Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPref.getString(context.getString(R.string.user_location), null);
+        return gson.fromJson(json, Location.class);
+    }
+
 }

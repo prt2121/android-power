@@ -23,17 +23,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.model.nyc;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.google.gson.annotations.Expose;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+import java.util.ArrayList;
+import java.util.List;
 
-    public ApplicationTest() {
-        super(Application.class);
+public class Grant {
+
+    @Expose
+    private Boolean inherited;
+
+    @Expose
+    private String type;
+
+    @Expose
+    private List<String> flags = new ArrayList<String>();
+
+    public Boolean getInherited() {
+        return inherited;
     }
+
+    public void setInherited(Boolean inherited) {
+        this.inherited = inherited;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<String> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(List<String> flags) {
+        this.flags = flags;
+    }
+
 }

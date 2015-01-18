@@ -23,17 +23,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.binlocation;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+
+import com.pt2121.envi.model.Loc;
+
+import rx.Observable;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/28/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public interface IFindBin {
 
-    public ApplicationTest() {
-        super(Application.class);
-    }
+    public Observable<Loc> getLocs();
+
 }

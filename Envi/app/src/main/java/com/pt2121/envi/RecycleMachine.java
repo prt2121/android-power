@@ -25,15 +25,27 @@
 
 package com.pt2121.envi;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.pt2121.envi.binlocation.BinLocationModule;
+import com.pt2121.envi.binlocation.IFindBin;
+import com.pt2121.envi.userlocation.IUserLocation;
+import com.pt2121.envi.userlocation.UserLocationModule;
+
+import javax.inject.Singleton;
+
+import dagger.Component;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/28/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+@Component(modules = {
+        RecycleModule.class,
+        BinLocationModule.class,
+        UserLocationModule.class
+})
+@Singleton
+public interface RecycleMachine {
 
-    public ApplicationTest() {
-        super(Application.class);
-    }
+    IFindBin finBin();
+
+    IUserLocation locateUser();
 }

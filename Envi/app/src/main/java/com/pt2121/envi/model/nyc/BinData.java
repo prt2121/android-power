@@ -23,17 +23,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.model.nyc;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.google.gson.annotations.Expose;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 9/27/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class BinData {
 
-    public ApplicationTest() {
-        super(Application.class);
+    @Expose
+    private Meta meta;
+
+    @Expose
+    private List<List<String>> data = new ArrayList<List<String>>();
+
+    public Meta getMeta() {
+        return meta;
     }
+
+    public void setMeta(Meta meta) {
+        this.meta = meta;
+    }
+
+    public List<List<String>> getData() {
+        return data;
+    }
+
+    public void setData(List<List<String>> data) {
+        this.data = data;
+    }
+
 }

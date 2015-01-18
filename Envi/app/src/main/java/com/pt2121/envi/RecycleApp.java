@@ -25,15 +25,30 @@
 
 package com.pt2121.envi;
 
+import com.pt2121.envi.binlocation.BinLocationModule;
+import com.pt2121.envi.userlocation.UserLocationModule;
+
 import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.content.Context;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/28/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class RecycleApp extends Application {
 
-    public ApplicationTest() {
-        super(Application.class);
+    private RecycleMachine mRecycleMachine;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mRecycleMachine = Dagger_RecycleMachine.builder()
+                .recycleModule(new RecycleModule(this))
+                .binLocationModule(new BinLocationModule())
+                .userLocationModule(new UserLocationModule(this))
+                .build();
+    }
+
+    public static RecycleMachine getRecycleMachine(Context context) {
+        return ((RecycleApp) context.getApplicationContext()).mRecycleMachine;
     }
 }

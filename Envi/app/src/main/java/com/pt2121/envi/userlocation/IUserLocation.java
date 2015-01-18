@@ -23,17 +23,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.userlocation;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.location.Location;
+
+import rx.Observable;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 10/1/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public interface IUserLocation {
 
-    public ApplicationTest() {
-        super(Application.class);
-    }
+    public void start();
+
+    public void stop();
+
+    public Observable<Location> observe();
+
 }

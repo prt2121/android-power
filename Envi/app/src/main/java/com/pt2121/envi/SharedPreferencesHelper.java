@@ -25,15 +25,27 @@
 
 package com.pt2121.envi;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/6/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class SharedPreferencesHelper implements ISharedPreferencesHelper {
 
-    public ApplicationTest() {
-        super(Application.class);
+    @Override
+    public boolean isFirstRun(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return (!prefs.contains("firstRun") || prefs.getBoolean("firstRun", false));
     }
+
+    @Override
+    public void setFirstRun(Context context, boolean firstRun) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("firstRun", firstRun);
+        editor.apply();
+    }
+
 }

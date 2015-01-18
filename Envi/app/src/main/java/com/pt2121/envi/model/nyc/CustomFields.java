@@ -23,17 +23,35 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.model.nyc;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class CustomFields {
 
-    public ApplicationTest() {
-        super(Application.class);
+    @SerializedName("Update")
+    @Expose
+    private Update update;
+
+    @SerializedName("Dataset Information")
+    @Expose
+    private DatasetInformation datasetInformation;
+
+    public Update getUpdate() {
+        return update;
     }
+
+    public void setUpdate(Update update) {
+        this.update = update;
+    }
+
+    public DatasetInformation getDatasetInformation() {
+        return datasetInformation;
+    }
+
+    public void setDatasetInformation(DatasetInformation datasetInformation) {
+        this.datasetInformation = datasetInformation;
+    }
+
 }

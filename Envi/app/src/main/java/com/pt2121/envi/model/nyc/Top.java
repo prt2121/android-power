@@ -23,17 +23,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.model.nyc;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.google.gson.annotations.Expose;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class Top {
 
-    public ApplicationTest() {
-        super(Application.class);
+    @Expose
+    private Integer count;
+
+    @Expose
+    private String item;
+
+    public Integer getCount() {
+        return count;
     }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
 }

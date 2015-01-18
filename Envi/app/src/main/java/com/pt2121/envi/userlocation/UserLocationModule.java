@@ -23,17 +23,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.userlocation;
 
 import android.app.Application;
-import android.test.ApplicationTestCase;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 9/30/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+@Module
+public class UserLocationModule {
 
-    public ApplicationTest() {
-        super(Application.class);
+    private final Application mApp;
+
+    @Inject
+    public UserLocationModule(Application app) {
+        this.mApp = app;
     }
+
+    @Provides
+    @Singleton
+    public IUserLocation provideUserLocation() {
+        return new UserLocation(mApp);
+    }
+
 }

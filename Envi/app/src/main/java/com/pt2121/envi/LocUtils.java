@@ -25,15 +25,42 @@
 
 package com.pt2121.envi;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import com.pt2121.envi.model.Loc;
+
+import android.location.Location;
+
+import rx.functions.Func2;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 1/1/15.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class LocUtils {
 
-    public ApplicationTest() {
-        super(Application.class);
+    private static double myLatitude;
+
+    private static double myLongitude;
+
+    public static Func2<Loc, Loc, Integer> compare(double lat, double lng) {
+        myLatitude = lat;
+        myLongitude = lng;
+        return f;
     }
+
+    public static Func2<Loc, Loc, Integer> f = new Func2<Loc, Loc, Integer>() {
+        @Override
+        public Integer call(Loc loc1, Loc loc2) {
+            float[] result1 = new float[3];
+            Location.distanceBetween(myLatitude, myLongitude,
+                    loc1.latitude, loc1.longitude,
+                    result1);
+            Float distance1 = result1[0];
+            float[] result2 = new float[3];
+            Location.distanceBetween(myLatitude, myLongitude,
+                    loc2.latitude, loc2.longitude,
+                    result2);
+            Float distance2 = result2[0];
+            return distance1.compareTo(distance2);
+        }
+    };
+
 }

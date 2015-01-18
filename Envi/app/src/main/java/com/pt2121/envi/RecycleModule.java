@@ -26,14 +26,27 @@
 package com.pt2121.envi;
 
 import android.app.Application;
-import android.test.ApplicationTestCase;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Created by prt2121 on 12/28/14.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+@Module
+public class RecycleModule {
 
-    public ApplicationTest() {
-        super(Application.class);
+    private final RecycleApp mApp;
+
+    public RecycleModule(RecycleApp app) {
+        mApp = app;
+    }
+
+    @Provides
+    @Singleton
+    Application provideApplication() {
+        return mApp;
     }
 }
