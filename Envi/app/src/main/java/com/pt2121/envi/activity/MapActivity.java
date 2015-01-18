@@ -71,7 +71,7 @@ public class MapActivity extends FragmentActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, MapFragment.newInstance("", ""))
+                .replace(R.id.container, MapFragment.newInstance(null))
                 .commit();
     }
 
