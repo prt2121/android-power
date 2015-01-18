@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 
 import com.pt2121.envi.R;
 import com.pt2121.envi.model.Loc;
+import com.pt2121.envi.model.LocType;
 import com.pt2121.envi.model.nyc.BinData;
 
 import android.app.Application;
@@ -88,6 +89,7 @@ public class NycBinLocation implements IFindBin {
                             .address(strings.get(len - 3))
                             .latitude(Double.parseDouble(strings.get(len - 2)))
                             .longitude(Double.parseDouble(strings.get(len - 1)))
+                            .type(LocType.BIN)
                             .build();
                     if (!subscriber.isUnsubscribed()) {
                         subscriber.onNext(loc);

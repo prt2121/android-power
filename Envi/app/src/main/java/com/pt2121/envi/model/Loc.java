@@ -38,13 +38,17 @@ public class Loc {
 
     public final double longitude;
 
+    //LocType
+    public final int type;
+
     public String image;
 
-    public Loc(String name, String address, double latitude, double longitude) {
+    public Loc(String name, String address, double latitude, double longitude, int type) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.type = type;
     }
 
     public static class Builder {
@@ -58,6 +62,8 @@ public class Loc {
         private double longitude;
 
         private String image;
+
+        private int type;
 
         public Builder(String name) {
             this.name = name;
@@ -83,8 +89,22 @@ public class Loc {
             return this;
         }
 
+        /**
+         * @param type LocType
+         * @return the builder with this {@code LocType}
+         * @see com.pt2121.envi.model.LocType
+         */
+        public Builder type(int type) {
+            this.type = type;
+            return this;
+        }
+
         public Loc build() {
-            Loc l = new Loc(this.name, this.address, this.latitude, this.longitude);
+            Loc l = new Loc(this.name,
+                    this.address,
+                    this.latitude,
+                    this.longitude,
+                    this.type);
             l.image = this.image;
             return l;
         }
