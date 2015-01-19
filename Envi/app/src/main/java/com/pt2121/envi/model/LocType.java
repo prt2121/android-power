@@ -30,7 +30,8 @@ package com.pt2121.envi.model;
  */
 public class LocType {
 
-    public static final int BIN = 0;
+    public static final int USER = 0;
 
+    public static final int BIN = 1;
 
 }

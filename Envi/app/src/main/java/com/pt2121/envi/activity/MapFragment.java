@@ -25,23 +25,36 @@
 
 package com.pt2121.envi.activity;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.pt2121.envi.LocUtils;
 import com.pt2121.envi.R;
+import com.pt2121.envi.RecycleApp;
 import com.pt2121.envi.model.Loc;
 
 import android.app.Activity;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -60,23 +73,35 @@ public class MapFragment extends Fragment {
 
     private SupportMapFragment fragment;
 
-    private List<Loc> mLocList;
+    private Loc mLoc;
 
     private static final String ARG_LOC = "locations";
 
     private OnFragmentInteractionListener mListener;
 
+    private static final float ZOOM = 17f;
+
+    private static final int MAX_LOCATION = 10;
+
+    private Subscription mSubscription;
+
+    Func1<Location, Observable<List<Loc>>> findClosestBins
+            = location -> RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
+            .finBin().getLocs()
+            .toSortedList(
+                    LocUtils.compare(mLoc.latitude, mLoc.longitude));
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameter.
      *
-     * @param locList Parameter 1.
+     * @param loc Parameter 1.
      * @return A new instance of fragment MapFragment.
      */
-    public static MapFragment newInstance(List<Loc> locList) {
+    public static MapFragment newInstance(Loc loc) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putParcelableList(ARG_LOC, locList);
+        args.putParcelable(ARG_LOC, loc);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,20 +114,52 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mLocList = getArguments().getParcelableArrayList(ARG_LOC);
+            mLoc = getArguments().getParcelable(ARG_LOC);
+            Location mockLocation = new Location(mLoc.name);
+            mockLocation.setLatitude(mLoc.latitude);
+            mockLocation.setLongitude(mLoc.longitude);
+            Observable<Location> mockObservable = Observable.just(mockLocation);
+            mSubscription = mockObservable
+                    .flatMap(findClosestBins)
+                    .flatMap(Observable::from)
+                    .take(MAX_LOCATION).onBackpressureBuffer()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Loc>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.d(TAG, "onCompleted");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(Loc loc) {
+                            if (mMap != null) {
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(loc.latitude, loc.longitude))
+                                        .title(loc.name)
+                                        .icon(BitmapDescriptorFactory
+                                                .defaultMarker(175))); //HSL: 175° 100% 34%
+                            }
+                        }
+                    });
         }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setUpMapIfNeeded();
+        setUpMapIfNeeded(mLoc);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        setUpMapIfNeeded(mLoc);
     }
 
     @Override
@@ -152,7 +209,7 @@ public class MapFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    private void setUpMapIfNeeded() {
+    private void setUpMapIfNeeded(Loc loc) {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
@@ -160,13 +217,16 @@ public class MapFragment extends Fragment {
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                setUpMap();
+                setUpMap(loc);
             }
         }
     }
 
-    private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+    private void setUpMap(Loc loc) {
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        LatLng latLng = new LatLng(loc.latitude, loc.longitude);
+        mMap.addMarker(new MarkerOptions().position(latLng).title(loc.name));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
     }
 
 }

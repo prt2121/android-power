@@ -26,6 +26,8 @@
 package com.pt2121.envi.activity;
 
 import com.pt2121.envi.R;
+import com.pt2121.envi.model.Loc;
+import com.pt2121.envi.model.LocType;
 
 import android.app.ActionBar;
 import android.net.Uri;
@@ -36,10 +38,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 public class MapActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         MapFragment.OnFragmentInteractionListener {
+
+    //Test Location : New York City Department of Health and Mental Hygiene
+    private final Loc mUserLoc = new Loc.Builder("Your Location")
+            .address("")
+            .latitude(40.715522)
+            .longitude(-74.002452)
+            .type(LocType.USER)
+            .build();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -71,7 +80,7 @@ public class MapActivity extends FragmentActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, MapFragment.newInstance(null))
+                .replace(R.id.container, MapFragment.newInstance(mUserLoc))
                 .commit();
     }
 
