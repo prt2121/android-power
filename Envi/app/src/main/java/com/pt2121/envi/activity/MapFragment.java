@@ -85,11 +85,10 @@ public class MapFragment extends Fragment {
 
     private Subscription mSubscription;
 
-    Func1<Location, Observable<List<Loc>>> findClosestBins
+    private Func1<Location, Observable<List<Loc>>> findClosestBins
             = location -> RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
             .finBin().getLocs()
-            .toSortedList(
-                    LocUtils.compare(mLoc.latitude, mLoc.longitude));
+            .toSortedList(LocUtils.compare(mLoc.latitude, mLoc.longitude));
 
     /**
      * Use this factory method to create a new instance of
@@ -119,35 +118,55 @@ public class MapFragment extends Fragment {
             mockLocation.setLatitude(mLoc.latitude);
             mockLocation.setLongitude(mLoc.longitude);
             Observable<Location> mockObservable = Observable.just(mockLocation);
-            mSubscription = mockObservable
-                    .flatMap(findClosestBins)
-                    .flatMap(Observable::from)
-                    .take(MAX_LOCATION).onBackpressureBuffer()
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<Loc>() {
-                        @Override
-                        public void onCompleted() {
-                            Log.d(TAG, "onCompleted");
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-
-                        @Override
-                        public void onNext(Loc loc) {
-                            if (mMap != null) {
-                                mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(loc.latitude, loc.longitude))
-                                        .title(loc.name)
-                                        .icon(BitmapDescriptorFactory
-                                                .defaultMarker(175))); //HSL: 175° 100% 34%
-                            }
-                        }
-                    });
+            mSubscription = showPins(mockObservable, findClosestBins);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
+    }
+
+    /**
+     * Show the pins on the map.
+     *
+     * @param userLocationObservable an observable of user's location
+     * @param findClosest            a function that returns an observable of a sorted list of
+     *                               {@code Loc}
+     */
+    private Subscription showPins(Observable<Location> userLocationObservable,
+            Func1<Location, Observable<List<Loc>>> findClosest) {
+        return userLocationObservable
+                .flatMap(findClosest)
+                .flatMap(Observable::from)
+                .take(MAX_LOCATION).onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Loc>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Loc loc) {
+                        if (mMap != null) {
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(loc.latitude, loc.longitude))
+                                    .title(loc.name)
+                                    .icon(BitmapDescriptorFactory
+                                            .defaultMarker(175))); //HSL: 175° 100% 34%
+                        }
+                    }
+                });
     }
 
     @Override
