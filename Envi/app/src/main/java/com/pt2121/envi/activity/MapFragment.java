@@ -28,11 +28,11 @@ package com.pt2121.envi.activity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.pt2121.envi.LocUtils;
+import com.pt2121.envi.MapUtils;
 import com.pt2121.envi.R;
 import com.pt2121.envi.RecycleApp;
 import com.pt2121.envi.model.Loc;
@@ -42,7 +42,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,11 +49,8 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -94,7 +90,7 @@ public class MapFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameter.
      *
-     * @param loc Parameter 1.
+     * @param loc user's location
      * @return A new instance of fragment MapFragment.
      */
     public static MapFragment newInstance(Loc loc) {
@@ -118,7 +114,7 @@ public class MapFragment extends Fragment {
             mockLocation.setLatitude(mLoc.latitude);
             mockLocation.setLongitude(mLoc.longitude);
             Observable<Location> mockObservable = Observable.just(mockLocation);
-            mSubscription = showPins(mockObservable, findClosestBins);
+            mSubscription = MapUtils.showPins(mockObservable, findClosestBins, mMap, MAX_LOCATION);
         }
     }
 
@@ -128,45 +124,6 @@ public class MapFragment extends Fragment {
         if (mSubscription.isUnsubscribed()) {
             mSubscription.unsubscribe();
         }
-    }
-
-    /**
-     * Show the pins on the map.
-     *
-     * @param userLocationObservable an observable of user's location
-     * @param findClosest            a function that returns an observable of a sorted list of
-     *                               {@code Loc}
-     */
-    private Subscription showPins(Observable<Location> userLocationObservable,
-            Func1<Location, Observable<List<Loc>>> findClosest) {
-        return userLocationObservable
-                .flatMap(findClosest)
-                .flatMap(Observable::from)
-                .take(MAX_LOCATION).onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Loc>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, "onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Loc loc) {
-                        if (mMap != null) {
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(loc.latitude, loc.longitude))
-                                    .title(loc.name)
-                                    .icon(BitmapDescriptorFactory
-                                            .defaultMarker(175))); //HSL: 175° 100% 34%
-                        }
-                    }
-                });
     }
 
     @Override
