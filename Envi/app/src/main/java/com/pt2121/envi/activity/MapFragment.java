@@ -110,11 +110,7 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mLoc = getArguments().getParcelable(ARG_LOC);
-            Location mockLocation = new Location(mLoc.name);
-            mockLocation.setLatitude(mLoc.latitude);
-            mockLocation.setLongitude(mLoc.longitude);
-            Observable<Location> mockObservable = Observable.just(mockLocation);
-            mSubscription = MapUtils.showPins(mockObservable, findClosestBins, mMap, MAX_LOCATION);
+            //mSubscription = MapUtils.showPins(mockObservable, findClosestBins, mMap, MAX_LOCATION);
         }
     }
 
@@ -203,6 +199,14 @@ public class MapFragment extends Fragment {
         LatLng latLng = new LatLng(loc.latitude, loc.longitude);
         mMap.addMarker(new MarkerOptions().position(latLng).title(loc.name));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
+
+        Location mockLocation = new Location(loc.name);
+        mockLocation.setLatitude(loc.latitude);
+        mockLocation.setLongitude(loc.longitude);
+        Observable<Location> mockObservable = Observable.just(mockLocation);
+        Observable<Loc> locObservable = RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
+                .finBin().getLocs();
+        mSubscription = MapUtils.showPins(mockObservable, locObservable, mMap, MAX_LOCATION, 175);
     }
 
 }

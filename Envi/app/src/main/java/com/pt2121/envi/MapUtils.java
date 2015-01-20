@@ -35,6 +35,7 @@ import com.pt2121.envi.model.Loc;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.util.Pair;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -97,6 +99,59 @@ public class MapUtils {
                                     .title(loc.name)
                                     .icon(BitmapDescriptorFactory
                                             .defaultMarker(175))); //HSL: 175° 100% 34%
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Show the pins on the map.
+     *
+     * @param pivot user's location or the center location.
+     * @param things bin locations or things
+     * @param map the map to be showed
+     * @param maxLocation the number of things
+     * @param hue the hue of the pin
+     * @return Subscription
+     */
+    public static Subscription showPins(Observable<Location> pivot, Observable<Loc> things,
+            GoogleMap map, int maxLocation, int hue) {
+        if(map == null)
+            Log.d(TAG, "map is NULL");
+
+        return Observable.zip(pivot.repeat(), things,
+                (location, loc) -> {
+                    Location l = new Location(loc.name);
+                    l.setLatitude(loc.latitude);
+                    l.setLongitude(loc.longitude);
+                    return new Pair<>(location.distanceTo(l), loc);
+                }).toSortedList((p1, p2) -> p1.first.compareTo(p2.first))
+                .flatMap(Observable::from)
+                .map(p -> p.second)
+                .take(maxLocation)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Loc>() {
+
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Loc loc) {
+                        if (map != null) {
+                            map.addMarker(new MarkerOptions()
+                                    .position(new LatLng(loc.latitude, loc.longitude))
+                                    .title(loc.name)
+                                    .icon(BitmapDescriptorFactory
+                                            .defaultMarker(hue))); //HSL: 175° 100% 34% //175
                         }
                     }
                 });
