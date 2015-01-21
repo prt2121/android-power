@@ -196,13 +196,14 @@ public class MapFragment extends Fragment {
         Observable<Location> mockObservable = Observable.just(mockLocation);
         Observable<Loc> bin =
                 RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
-                .findBin().getLocs();
+                        .findBin()
+                        .getLocs();
         Observable<Loc> dropOff =
                 RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
                         .findDropOff()
                         .getLocs();
         mSubscription = MapUtils.showPins(mockObservable,
-                dropOff.concatWith(bin) , mMap, MAX_LOCATION);
+                dropOff.concatWith(bin), mMap, MAX_LOCATION);
     }
 
 }

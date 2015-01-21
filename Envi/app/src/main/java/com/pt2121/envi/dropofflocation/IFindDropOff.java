@@ -33,5 +33,6 @@ import rx.Observable;
  * Created by prt2121 on 1/20/15.
  */
 public interface IFindDropOff {
+
     public Observable<Loc> getLocs();
 }
