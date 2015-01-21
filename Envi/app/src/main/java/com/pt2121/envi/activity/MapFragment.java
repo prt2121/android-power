@@ -81,11 +81,6 @@ public class MapFragment extends Fragment {
 
     private Subscription mSubscription;
 
-    private Func1<Location, Observable<List<Loc>>> findClosestBins
-            = location -> RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
-            .finBin().getLocs()
-            .toSortedList(LocUtils.compare(mLoc.latitude, mLoc.longitude));
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameter.
@@ -204,9 +199,10 @@ public class MapFragment extends Fragment {
         mockLocation.setLatitude(loc.latitude);
         mockLocation.setLongitude(loc.longitude);
         Observable<Location> mockObservable = Observable.just(mockLocation);
-        Observable<Loc> locObservable = RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
+        Observable<Loc> locObservable =
+                RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
                 .finBin().getLocs();
-        mSubscription = MapUtils.showPins(mockObservable, locObservable, mMap, MAX_LOCATION, 175);
+        mSubscription = MapUtils.showPins(mockObservable, locObservable, mMap, MAX_LOCATION);
     }
 
 }
