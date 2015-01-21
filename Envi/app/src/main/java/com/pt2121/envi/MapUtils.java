@@ -93,13 +93,11 @@ public class MapUtils {
 
                     @Override
                     public void onNext(Loc loc) {
-                        if (map != null) {
-                            map.addMarker(new MarkerOptions()
-                                    .position(new LatLng(loc.latitude, loc.longitude))
-                                    .title(loc.name)
-                                    .icon(BitmapDescriptorFactory
-                                            .defaultMarker(hue))); //HSL: 175° 100% 34% //175
-                        }
+                        map.addMarker(new MarkerOptions()
+                                .position(new LatLng(loc.latitude, loc.longitude))
+                                .title(loc.name)
+                                .icon(BitmapDescriptorFactory
+                                        .defaultMarker(hue))); //HSL: 175° 100% 34% //175
                     }
                 });
     }
