@@ -26,6 +26,7 @@
 package com.pt2121.envi;
 
 import com.pt2121.envi.binlocation.BinLocationModule;
+import com.pt2121.envi.dropofflocation.DropOffLocationModule;
 import com.pt2121.envi.userlocation.UserLocationModule;
 
 import android.app.Application;
@@ -45,6 +46,7 @@ public class RecycleApp extends Application {
                 .recycleModule(new RecycleModule(this))
                 .binLocationModule(new BinLocationModule())
                 .userLocationModule(new UserLocationModule(this))
+                .dropOffLocationModule(new DropOffLocationModule())
                 .build();
     }
 

@@ -30,8 +30,22 @@ package com.pt2121.envi.model;
  */
 public class LocType {
 
-    public static final int USER = 0;
+    /**
+     * Value for {@link Loc#type}:
+     * if set, the location is user's location.
+     */
+    public static final int USER = 1;
 
-    public static final int BIN = 1;
+    /**
+     * Value for {@link Loc#type}:
+     * if set, the location is a bin location.
+     */
+    public static final int BIN = 1<<1;
+
+    /**
+     * Value for {@link Loc#type}:
+     * if set, the location is a drop-off Site.
+     */
+    public static final int DROPOFF = 1<<2;
 
 }

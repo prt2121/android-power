@@ -23,34 +23,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
+package com.pt2121.envi.dropofflocation;
 
-import com.pt2121.envi.binlocation.BinLocationModule;
-import com.pt2121.envi.binlocation.IFindBin;
-import com.pt2121.envi.dropofflocation.DropOffLocationModule;
-import com.pt2121.envi.dropofflocation.IFindDropOff;
-import com.pt2121.envi.userlocation.IUserLocation;
-import com.pt2121.envi.userlocation.UserLocationModule;
+import com.pt2121.envi.model.Loc;
+import com.pt2121.envi.model.LocType;
 
-import javax.inject.Singleton;
-
-import dagger.Component;
+import rx.Observable;
 
 /**
- * Created by prt2121 on 12/28/14.
+ * Created by prt2121 on 1/20/15.
  */
-@Component(modules = {
-        RecycleModule.class,
-        BinLocationModule.class,
-        UserLocationModule.class,
-        DropOffLocationModule.class
-})
-@Singleton
-public interface RecycleMachine {
+public class DropOffLocation implements IFindDropOff {
 
-    IFindBin findBin();
+    public static final String NAME = "Household Special Waste Drop-Off Site";
 
-    IUserLocation locateUser();
-
-    IFindDropOff findDropOff();
+    @Override
+    public Observable<Loc> getLocs() {
+        Loc[] locs = {
+                new Loc(NAME, "Hunts Point Ave New York, NY 10474",
+                        40.820948, -73.890549,
+                        LocType.DROPOFF),
+                new Loc(NAME, "Gravesend New York, NY 11214",
+                        40.591017, -73.977126,
+                        LocType.DROPOFF),
+                new Loc(NAME, "121st St New York, NY 11354",
+                        40.771360, -73.847710,
+                        LocType.DROPOFF),
+                new Loc(NAME, "Muldoon Ave New York, NY 10312",
+                        40.569652, -74.194829,
+                        LocType.DROPOFF)
+        };
+        return Observable.from(locs);
+    }
 }

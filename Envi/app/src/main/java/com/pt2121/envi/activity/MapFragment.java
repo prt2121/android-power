@@ -31,7 +31,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.pt2121.envi.LocUtils;
 import com.pt2121.envi.MapUtils;
 import com.pt2121.envi.R;
 import com.pt2121.envi.RecycleApp;
@@ -46,11 +45,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Func1;
 
 
 /**
@@ -201,7 +197,7 @@ public class MapFragment extends Fragment {
         Observable<Location> mockObservable = Observable.just(mockLocation);
         Observable<Loc> locObservable =
                 RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
-                .finBin().getLocs();
+                .findBin().getLocs();
         mSubscription = MapUtils.showPins(mockObservable, locObservable, mMap, MAX_LOCATION);
     }
 

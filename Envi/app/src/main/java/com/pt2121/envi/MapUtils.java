@@ -162,6 +162,8 @@ public class MapUtils {
                 return BitmapDescriptorFactory.HUE_BLUE;
             case LocType.BIN:
                 return 175f;
+            case LocType.DROPOFF:
+                return BitmapDescriptorFactory.HUE_YELLOW;
             default:
                 return BitmapDescriptorFactory.HUE_GREEN;
         }

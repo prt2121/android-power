@@ -23,34 +23,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.pt2121.envi;
-
-import com.pt2121.envi.binlocation.BinLocationModule;
-import com.pt2121.envi.binlocation.IFindBin;
-import com.pt2121.envi.dropofflocation.DropOffLocationModule;
-import com.pt2121.envi.dropofflocation.IFindDropOff;
-import com.pt2121.envi.userlocation.IUserLocation;
-import com.pt2121.envi.userlocation.UserLocationModule;
+package com.pt2121.envi.dropofflocation;
 
 import javax.inject.Singleton;
 
-import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * Created by prt2121 on 12/28/14.
+ * Created by prt2121 on 1/20/15.
  */
-@Component(modules = {
-        RecycleModule.class,
-        BinLocationModule.class,
-        UserLocationModule.class,
-        DropOffLocationModule.class
-})
-@Singleton
-public interface RecycleMachine {
+@Module
+public class DropOffLocationModule {
 
-    IFindBin findBin();
-
-    IUserLocation locateUser();
-
-    IFindDropOff findDropOff();
+    @Provides
+    @Singleton
+    public IFindDropOff provideDropOffLocation() {
+        return new DropOffLocation();
+    }
 }
