@@ -73,7 +73,7 @@ public class MapFragment extends Fragment {
 
     private static final float ZOOM = 17f;
 
-    private static final int MAX_LOCATION = 10;
+    private static final int MAX_LOCATION = Integer.MAX_VALUE;
 
     private Subscription mSubscription;
 
@@ -186,7 +186,6 @@ public class MapFragment extends Fragment {
     }
 
     private void setUpMap(Loc loc) {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         LatLng latLng = new LatLng(loc.latitude, loc.longitude);
         mMap.addMarker(new MarkerOptions().position(latLng).title(loc.name));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
@@ -195,10 +194,15 @@ public class MapFragment extends Fragment {
         mockLocation.setLatitude(loc.latitude);
         mockLocation.setLongitude(loc.longitude);
         Observable<Location> mockObservable = Observable.just(mockLocation);
-        Observable<Loc> locObservable =
+        Observable<Loc> bin =
                 RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
                 .findBin().getLocs();
-        mSubscription = MapUtils.showPins(mockObservable, locObservable, mMap, MAX_LOCATION);
+        Observable<Loc> dropOff =
+                RecycleApp.getRecycleMachine(MapFragment.this.getActivity())
+                        .findDropOff()
+                        .getLocs();
+        mSubscription = MapUtils.showPins(mockObservable,
+                dropOff.concatWith(bin) , mMap, MAX_LOCATION);
     }
 
 }
