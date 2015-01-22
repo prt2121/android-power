@@ -53,9 +53,10 @@ public class OnboardingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.view_onboarding, container, false);
-        Bundle args = getArguments();
+        final int position = getArguments().getInt(ARG_POSITION);
         ((TextView) rootView.findViewById(R.id.onboardingTextView)).setText(
-                getOnboardingText(args.getInt(ARG_POSITION)));
+                getOnboardingText(position));
+        rootView.findViewById(R.id.content).setBackgroundResource(getBackgroundId(position));
         return rootView;
     }
 
@@ -69,6 +70,19 @@ public class OnboardingFragment extends Fragment {
                 return "Start making a difference one can at a time.";
             default:
                 return "";
+        }
+    }
+
+    private int getBackgroundId(int position) {
+        switch (position) {
+            case 0:
+                return R.drawable.onboarding_1;
+            case 1:
+                return R.drawable.onboarding_2;
+            case 2:
+                return R.drawable.onboarding_3;
+            default:
+                return R.drawable.onboarding_1;
         }
     }
 
