@@ -61,10 +61,14 @@ public class OnboardingFragment extends Fragment {
 
     private String getOnboardingText(int position) {
         switch (position) {
-            case 0 : return "Find the nearest recycling bins within walking distance.";
-            case 1 : return "Learn about which stores take stuff back.";
-            case 2 : return "Start making a difference one can at a time.";
-            default: return "";
+            case 0:
+                return "Find the nearest recycling bins within walking distance.";
+            case 1:
+                return "Learn about which stores take stuff back.";
+            case 2:
+                return "Start making a difference one can at a time.";
+            default:
+                return "";
         }
     }
 
