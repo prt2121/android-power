@@ -55,9 +55,17 @@ public class OnboardingFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.view_onboarding, container, false);
         Bundle args = getArguments();
         ((TextView) rootView.findViewById(R.id.onboardingTextView)).setText(
-                "Onboarding " +
-                        Integer.toString(args.getInt(ARG_POSITION)));
+                getOnboardingText(args.getInt(ARG_POSITION)));
         return rootView;
+    }
+
+    private String getOnboardingText(int position) {
+        switch (position) {
+            case 0 : return "Find the nearest recycling bins within walking distance.";
+            case 1 : return "Learn about which stores take stuff back.";
+            case 2 : return "Start making a difference one can at a time.";
+            default: return "";
+        }
     }
 
 }
