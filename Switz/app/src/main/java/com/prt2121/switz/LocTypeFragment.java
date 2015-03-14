@@ -21,15 +21,12 @@ public class LocTypeFragment extends Fragment {
 
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private List<LocType> mLocTypes;
-
     public LocTypeFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocTypes = LocTypeModule.getInstance().getTypes();
     }
 
     @Override
@@ -38,7 +35,7 @@ public class LocTypeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new LocTypeAdapter(mLocTypes);
+        mAdapter = new LocTypeAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
