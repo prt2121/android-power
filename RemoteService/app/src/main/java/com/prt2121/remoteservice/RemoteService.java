@@ -68,6 +68,8 @@ public class RemoteService extends Service {
         // Remove the next pending message to increment the counter, stopping
         // the increment loop.
         mHandler.removeMessages(REPORT_MSG);
+
+        Log.d(RemoteService.class.getSimpleName(), "RemoteService#onDestroy()");
     }
 
     // BEGIN_INCLUDE(exposing_a_service)
@@ -90,6 +92,12 @@ public class RemoteService extends Service {
             return mSecondaryBinder;
         }
         return null;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(RemoteService.class.getSimpleName(), "RemoteService#onUnbind()");
+        return super.onUnbind(intent);
     }
 
     /**
