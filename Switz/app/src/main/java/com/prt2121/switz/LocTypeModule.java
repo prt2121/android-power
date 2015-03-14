@@ -1,7 +1,8 @@
 package com.prt2121.switz;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+
+import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
@@ -18,13 +19,19 @@ public class LocTypeModule {
 
     @Provides
     @Singleton
-    public List<LocType> provideLocTypes() {
-        // TODO: fetch from shared pref
-        List<LocType> types = new ArrayList<>();
-        types.add(new LocType("User", true));
-        types.add(new LocType("Bin", true));
-        types.add(new LocType("Supermarket/Grocery", true));
-        types.add(new LocType("Drop-Off", true));
+    public LocType[] provideLocTypes(SharedPreferences preferences, Gson gson) {
+        String s = preferences.getString("locType", null);
+        LocType[] types = gson.fromJson(s, LocType[].class);
+        if (types == null) {
+            types = new LocType[4];
+            types[0] = new LocType("User", true);
+            types[1] = new LocType("Bin", true);
+            types[2] = new LocType("Supermarket/Grocery", true);
+            types[3] = new LocType("Drop-Off", true);
+            SharedPreferences.Editor e = preferences.edit();
+            e.putString("locType", gson.toJson(types));
+            e.apply();
+        }
         return types;
     }
 

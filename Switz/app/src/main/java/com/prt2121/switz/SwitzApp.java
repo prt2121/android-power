@@ -16,6 +16,7 @@ public class SwitzApp extends Application {
         super.onCreate();
         mInstance = this;
         mGraph = Dagger_Graph.builder()
+                .tinyDbModule(new TinyDbModule(getApplicationContext()))
                 .locTypeModule(new LocTypeModule())
                 .build();
     }

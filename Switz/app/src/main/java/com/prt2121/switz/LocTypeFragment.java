@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 /**
@@ -24,7 +22,7 @@ public class LocTypeFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     @Inject
-    List<LocType> mTypes;
+    LocType[] mTypes;
 
     public LocTypeFragment() {
     }

@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 /**
  * Created by pt2121 on 3/13/15.
  */
@@ -16,9 +14,9 @@ public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHold
 
     private static final String TAG = LocTypeAdapter.class.getSimpleName();
 
-    List<LocType> mTypes;
+    LocType[] mTypes;
 
-    public LocTypeAdapter(List<LocType> types) {
+    public LocTypeAdapter(LocType[] types) {
         mTypes = types;
     }
 
@@ -31,13 +29,13 @@ public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mTypes.get(position).name);
-        holder.mSwitchCompat.setChecked(mTypes.get(position).checked);
+        holder.mTextView.setText(mTypes[position].name);
+        holder.mSwitchCompat.setChecked(mTypes[position].checked);
     }
 
     @Override
     public int getItemCount() {
-        return mTypes.size();
+        return mTypes.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
