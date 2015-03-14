@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -21,12 +23,16 @@ public class LocTypeFragment extends Fragment {
 
     private RecyclerView.LayoutManager mLayoutManager;
 
+    @Inject
+    List<LocType> mTypes;
+
     public LocTypeFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SwitzApp.getInstance().getGraph().inject(this);
     }
 
     @Override
@@ -35,7 +41,7 @@ public class LocTypeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new LocTypeAdapter();
+        mAdapter = new LocTypeAdapter(mTypes);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;

@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
  * Created by pt2121 on 3/13/15.
  */
@@ -18,11 +16,10 @@ public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHold
 
     private static final String TAG = LocTypeAdapter.class.getSimpleName();
 
-    @Inject
     List<LocType> mTypes;
 
-    public LocTypeAdapter() {
-        SwitzApp.getInstance().getGraph().inject(this);
+    public LocTypeAdapter(List<LocType> types) {
+        mTypes = types;
     }
 
     @Override
@@ -46,6 +43,7 @@ public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView mTextView;
+
         public final SwitchCompat mSwitchCompat;
 
         public ViewHolder(View v) {

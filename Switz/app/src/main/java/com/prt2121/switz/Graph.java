@@ -15,6 +15,6 @@ public interface Graph {
 
     List<LocType> locTypes();
 
-    void inject(LocTypeAdapter locTypeAdapter);
+    void inject(LocTypeFragment fragment);
 
 }

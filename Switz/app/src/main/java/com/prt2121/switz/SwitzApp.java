@@ -7,21 +7,21 @@ import android.app.Application;
  */
 public class SwitzApp extends Application {
 
-    private static SwitzApp mInstace;
+    private static SwitzApp mInstance;
 
     private Graph mGraph;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mInstace = this;
+        mInstance = this;
         mGraph = Dagger_Graph.builder()
                 .locTypeModule(new LocTypeModule())
                 .build();
     }
 
     public static SwitzApp getInstance() {
-        return mInstace;
+        return mInstance;
     }
 
     public Graph getGraph() {
