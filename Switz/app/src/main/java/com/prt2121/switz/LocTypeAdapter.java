@@ -1,5 +1,8 @@
 package com.prt2121.switz;
 
+import com.google.gson.Gson;
+
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -7,17 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 /**
  * Created by pt2121 on 3/13/15.
  */
 public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHolder> {
 
+    @Inject
+    SharedPreferences mPreferences;
+
+    @Inject
+    Gson mGson;
+
     private static final String TAG = LocTypeAdapter.class.getSimpleName();
 
-    LocType[] mTypes;
+    private LocType[] mTypes;
 
     public LocTypeAdapter(LocType[] types) {
         mTypes = types;
+        SwitzApp.getInstance().getGraph().inject(this);
     }
 
     @Override
@@ -30,7 +42,10 @@ public class LocTypeAdapter extends RecyclerView.Adapter<LocTypeAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mTextView.setText(mTypes[position].name);
-        holder.mSwitchCompat.setChecked(mTypes[position].checked);
+        holder.mSwitchCompat.setChecked(mTypes[position].isChecked());
+        holder.mSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            LocTypeModule.updateLocType(mPreferences, mGson, position, isChecked);
+        });
     }
 
     @Override

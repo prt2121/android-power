@@ -26,4 +26,6 @@ public interface Graph {
 
     void inject(LocTypeFragment fragment);
 
+    void inject(LocTypeAdapter adapter);
+
 }

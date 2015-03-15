@@ -23,16 +23,24 @@ public class LocTypeModule {
         String s = preferences.getString("locType", null);
         LocType[] types = gson.fromJson(s, LocType[].class);
         if (types == null) {
-            types = new LocType[4];
-            types[0] = new LocType("User", true);
-            types[1] = new LocType("Bin", true);
-            types[2] = new LocType("Supermarket/Grocery", true);
-            types[3] = new LocType("Drop-Off", true);
+            types = new LocType[3];
+            types[0] = new LocType("Bin", true);
+            types[1] = new LocType("Supermarket/Grocery", true);
+            types[2] = new LocType("Drop-Off", true);
             SharedPreferences.Editor e = preferences.edit();
             e.putString("locType", gson.toJson(types));
             e.apply();
         }
         return types;
+    }
+
+    public static void updateLocType(SharedPreferences preferences, Gson gson, int position, boolean checked) {
+        String s = preferences.getString("locType", null);
+        LocType[] types = gson.fromJson(s, LocType[].class);
+        types[position].setChecked(checked);
+        SharedPreferences.Editor e = preferences.edit();
+        e.putString("locType", gson.toJson(types));
+        e.apply();
     }
 
 }
