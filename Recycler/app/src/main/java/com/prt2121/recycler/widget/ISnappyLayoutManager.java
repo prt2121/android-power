@@ -6,8 +6,6 @@ package com.prt2121.recycler.widget;
 public interface ISnappyLayoutManager {
 
     /**
-     * @param velocityX
-     * @param velocityY
      * @return the resultant position from a fling of the given velocity.
      */
     int getPositionForVelocity(int velocityX, int velocityY);

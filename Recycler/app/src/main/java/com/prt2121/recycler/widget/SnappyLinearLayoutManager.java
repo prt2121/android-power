@@ -13,12 +13,15 @@ import android.view.ViewConfiguration;
  * Created by ptanapai on 4/28/2015.
  */
 public class SnappyLinearLayoutManager extends LinearLayoutManager implements ISnappyLayoutManager {
+
     // These variables are from android.widget.Scroller, which is used, via ScrollerCompat, by
     // Recycler View. The scrolling distance calculation logic originates from the same place. Want
     // to use their variables so as to approximate the look of normal Android scrolling.
     // Find the Scroller fling implementation in android.widget.Scroller.fling().
     private static final float INFLEXION = 0.35f; // Tension lines cross at (INFLEXION, 1)
+
     private static float DECELERATION_RATE = (float) (Math.log(0.78) / Math.log(0.9));
+
     private static double FRICTION = 0.84;
 
     private double deceleration;
