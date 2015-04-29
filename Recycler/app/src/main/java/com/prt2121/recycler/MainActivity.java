@@ -1,5 +1,9 @@
 package com.prt2121.recycler;
 
+import com.prt2121.recycler.widget.SnapLinearLayoutManager;
+import com.prt2121.recycler.widget.SnapRecyclerView;
+
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,58 +11,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
-
-    private RecyclerView.Adapter mAdapter;
-
-    private LinearLayoutManager mLayoutManager;
-
-    private String[] myDataset = {"1", "2", "3", "4", "5",
-            "6", "7", "8", "9", "10",
-            "11", "12", "13", "14", "15",
-            "16", "17", "18", "19", "20",
-            "21", "22", "23", "24", "25",};
+    // TODO:
+    private String[] mData = {"0", "5", "10", "15", "18", "20", "25",
+            "30", "35", "40", "45", "50", "", "", "", ""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-//        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyAdapter(myDataset);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean scrollingLeft;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // layoutManager is the recyclerview's layout manager which you need to have reference in advance
-                    int visiblePosition = scrollingLeft ? mLayoutManager.findFirstVisibleItemPosition()
-                            : mLayoutManager.findLastVisibleItemPosition();
-                    int completelyVisiblePosition = scrollingLeft ? mLayoutManager
-                            .findFirstCompletelyVisibleItemPosition() : mLayoutManager
-                            .findLastCompletelyVisibleItemPosition();
-                    // Check if we need to snap
-                    if (visiblePosition != completelyVisiblePosition) {
-                        recyclerView.smoothScrollToPosition(visiblePosition);
-                    }
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                scrollingLeft = dx < 0;
-            }
-        });
+        SnapRecyclerView recyclerView = (SnapRecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        SnapLinearLayoutManager layoutManager = new SnapLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.Adapter adapter = new MyAdapter(mData);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -82,4 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /*class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            super.onDrawOver(c, parent, state);
+        }
+    }*/
 }

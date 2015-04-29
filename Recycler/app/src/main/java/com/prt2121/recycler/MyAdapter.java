@@ -2,6 +2,7 @@ package com.prt2121.recycler;
 
 import com.prt2121.recycler.widget.SquareTextView;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,13 @@ import android.view.ViewGroup;
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private String[] mDataset;
+    private String[] mData;
+
+    private static final int MAX = 6;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyAdapter(String[] myDataset) {
-        mDataset = myDataset;
+        mData = myDataset;
     }
 
     // Create new views (invoked by the layout manager)
@@ -32,16 +35,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset[position]);
-//        holder.mImageView.setImageResource(R.drawable.placeholder);
+        holder.mTextView.setText(mData[position]);
+        int alpha = position > MAX ? 255 : 255 * position / MAX;
+        holder.mTextView.setBackgroundColor(Color.argb(alpha, 4, 113, 179));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mData.length;
     }
 
     // Provide a reference to the views for each data item
