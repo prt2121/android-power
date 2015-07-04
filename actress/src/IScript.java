@@ -3,26 +3,34 @@
  */
 public interface IScript {
 
-    Line whenHear(String keyword);
+    Line whenHear(String word);
 
-    Line whenHear(String[] keyword);
+    Line whenHear(String[] words);
 
-    void deleteKeyword(String keyword);
+    Line whenHearKeyword(String keyword);
 
-    String query(String keyword);
+    Line whenHearKeywords(String[] keywords);
 
-    String queryContain(String keyword);
+    void deleteWord(String word);
 
-    String queryContain(String[] keywords);
+    String query(String word);
+
+    String queryAll(String word);
 
     class Line {
-        public final String keyword;
+        public final String[] words;
         private String line;
         private Script script;
 
         public Line(Script script, String keyword) {
             this.script = script;
-            this.keyword = keyword;
+            this.words = new String[1];
+            words[0] = keyword;
+        }
+
+        public Line(Script script, String[] words) {
+            this.script = script;
+            this.words = words;
         }
 
         public Script say(String response) {

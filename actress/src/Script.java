@@ -8,9 +8,13 @@ import java.util.Map;
  */
 public class Script implements IScript {
 
-    private Map<String, String> map = new HashMap<String, String>();
+    private Map<String, String> wordMap = new HashMap<String, String>();
+
+    private Map<String, String> keywordMap = new HashMap<String, String>();
 
     private List<Line> lines = new ArrayList<Line>();
+
+    private List<Line> keywordLines = new ArrayList<Line>();
 
     private boolean ignoreCase;
 
@@ -26,82 +30,109 @@ public class Script implements IScript {
     public Script build() {
         if (ignoreCase) {
             for (Line line : lines) {
-                map.put(line.keyword.toLowerCase(), line.respond().toLowerCase());
+                String respond = line.respond().toLowerCase();
+                for (String word : line.words) {
+                    wordMap.put(word.toLowerCase(), respond);
+                }
+            }
+            for (Line line : keywordLines) {
+                String respond = line.respond().toLowerCase();
+                for (String keyword : line.words) {
+                    keywordMap.put(keyword.toLowerCase(), respond);
+                }
             }
         } else {
             for (Line line : lines) {
-                map.put(line.keyword, line.respond());
+                String respond = line.respond();
+                for (String word : line.words) {
+                    wordMap.put(word, respond);
+                }
+            }
+            for (Line line : keywordLines) {
+                String respond = line.respond();
+                for (String keyword : line.words) {
+                    keywordMap.put(keyword, respond);
+                }
             }
         }
         return this;
     }
 
     @Override
-    public Line whenHear(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            throw new IllegalArgumentException("keyword must not be null or empty.");
+    public Line whenHear(String word) {
+        if (word == null || word.isEmpty()) {
+            throw new IllegalArgumentException("word must not be null or empty.");
         }
-        Line line = new Line(this, keyword);
+        Line line = new Line(this, word);
         lines.add(line);
         return line;
     }
 
     @Override
-    public Line whenHear(String[] keyword) {
-        return null;
+    public Line whenHear(String[] words) {
+        if (words == null || words.length == 0) {
+            throw new IllegalArgumentException("words must not be null or empty.");
+        }
+        Line line = new Line(this, words);
+        lines.add(line);
+        return line;
     }
 
     @Override
-    public void deleteKeyword(String keyword) {
+    public Line whenHearKeyword(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            throw new IllegalArgumentException("keyword must not be null or empty.");
+            throw new IllegalArgumentException("word must not be null or empty.");
         }
-        if (map.containsKey(keyword))
-            map.remove(keyword);
+        Line line = new Line(this, keyword);
+        keywordLines.add(line);
+        return line;
     }
 
     @Override
-    public String query(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            throw new IllegalArgumentException("keyword must not be null or empty.");
+    public Line whenHearKeywords(String[] keywords) {
+        if (keywords == null || keywords.length == 0) {
+            throw new IllegalArgumentException("word must not be null or empty.");
         }
-        if (map.containsKey(keyword))
-            return map.get(keyword);
+        Line line = new Line(this, keywords);
+        keywordLines.add(line);
+        return line;
+    }
+
+    @Override
+    public void deleteWord(String word) {
+        if (word == null || word.isEmpty()) {
+            throw new IllegalArgumentException("word must not be null or empty.");
+        }
+        if (wordMap.containsKey(word))
+            wordMap.remove(word);
+    }
+
+    @Override
+    public String query(String text) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("text must not be null or empty.");
+        }
+        text = ignoreCase ? text.toLowerCase() : text;
+        if (wordMap.containsKey(text))
+            return wordMap.get(text);
         else
             return null;
     }
 
     @Override
-    public String queryContain(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            throw new IllegalArgumentException("keyword must not be null or empty.");
+    public String queryAll(String text) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("text must not be null or empty.");
         }
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        text = ignoreCase ? text.toLowerCase() : text;
+        if (wordMap.containsKey(text)) {
+            return wordMap.get(text);
+        }
+        for (Map.Entry<String, String> entry : keywordMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (key.contains(keyword))
+            if (text.contains(key))
                 return value;
-        }
-        return null;
-    }
-
-    @Override
-    public String queryContain(String[] keywords) {
-        if (keywords == null || keywords.length == 0) {
-            throw new IllegalArgumentException("keywords must not be null or empty.");
-        }
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            boolean contain = true;
-            for (String keyword : keywords) {
-                if (!key.contains(keyword)) {
-                    contain = false;
-                }
-            }
-            if (contain) {
-                return value;
-            }
         }
         return null;
     }
