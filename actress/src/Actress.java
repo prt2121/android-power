@@ -5,15 +5,15 @@ public class Actress {
 
     private Script script;
 
+    private Actress(Script script) {
+        this.script = script;
+    }
+
     public static Actress with(Script script) {
         return new Actress(script);
     }
 
     public void setScript(Script script) {
-        this.script = script;
-    }
-
-    private Actress(Script script) {
         this.script = script;
     }
 
