@@ -10,15 +10,15 @@ import java.util.Map;
  */
 public class Script implements IScript {
 
-    Map<String, Response> wordMap = new HashMap<>();
+    private Map<String, Response> wordMap = new HashMap<>();
 
-    Map<String, Response> keywordMap = new HashMap<>();
+    private Map<String, Response> keywordMap = new HashMap<>();
 
-    List<Line> lines = new ArrayList<>();
+    private List<Line> lines = new ArrayList<>();
 
-    List<Line> keywordLines = new ArrayList<>();
+    private List<Line> keywordLines = new ArrayList<>();
 
-    boolean ignoreCase;
+    private boolean ignoreCase;
 
     public static Script blank() {
         return new Script();
@@ -31,31 +31,11 @@ public class Script implements IScript {
 
     public Script build() {
         if (ignoreCase) {
-            for (Line line : lines) {
-                Response respond = line.respond();
-                for (String word : line.words) {
-                    wordMap.put(word.toLowerCase(), respond);
-                }
-            }
-            for (Line line : keywordLines) {
-                Response respond = line.respond();
-                for (String keyword : line.words) {
-                    keywordMap.put(keyword.toLowerCase(), respond);
-                }
-            }
+            addWordsIgnoreCase(lines, wordMap);
+            addWordsIgnoreCase(keywordLines, keywordMap);
         } else {
-            for (Line line : lines) {
-                Response respond = line.respond();
-                for (String word : line.words) {
-                    wordMap.put(word, respond);
-                }
-            }
-            for (Line line : keywordLines) {
-                Response respond = line.respond();
-                for (String keyword : line.words) {
-                    keywordMap.put(keyword, respond);
-                }
-            }
+            addWords(lines, wordMap);
+            addWords(keywordLines, keywordMap);
         }
         return this;
     }
@@ -137,6 +117,24 @@ public class Script implements IScript {
                 return value;
         }
         return null;
+    }
+
+    private void addWordsIgnoreCase(List<Line> ls, Map<String, Response> map) {
+        for (Line line : ls) {
+            Response respond = line.respond();
+            for (String word : line.words) {
+                map.put(word.toLowerCase(), respond);
+            }
+        }
+    }
+
+    private void addWords(List<Line> ls, Map<String, Response> map) {
+        for (Line line : ls) {
+            Response respond = line.respond();
+            for (String word : line.words) {
+                map.put(word, respond);
+            }
+        }
     }
 
     /**
