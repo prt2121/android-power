@@ -19,7 +19,7 @@ public class Actress {
         this.script = script;
     }
 
-    public IScript.Response respond(String word) {
+    public Response respond(String word) {
         return script.queryAll(word);
     }
 
@@ -52,7 +52,7 @@ public class Actress {
         System.out.println(actress.respond("it's so funny. haha").line);
         System.out.println(actress.respond("Google vs Apple").line);
 
-        IScript.Response response = actress.respond("borrow");
+        Response response = actress.respond("borrow");
         System.out.println(response.line);
         response.callback.call();
 
