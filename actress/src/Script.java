@@ -8,15 +8,15 @@ import java.util.Map;
  */
 public class Script implements IScript {
 
-    private Map<String, Response> wordMap = new HashMap<>();
+    Map<String, Response> wordMap = new HashMap<>();
 
-    private Map<String, Response> keywordMap = new HashMap<>();
+    Map<String, Response> keywordMap = new HashMap<>();
 
-    private List<Line> lines = new ArrayList<>();
+    List<Line> lines = new ArrayList<>();
 
-    private List<Line> keywordLines = new ArrayList<>();
+    List<Line> keywordLines = new ArrayList<>();
 
-    private boolean ignoreCase;
+    boolean ignoreCase;
 
     public static Script blank() {
         return new Script();
@@ -63,7 +63,7 @@ public class Script implements IScript {
         if (word == null || word.isEmpty()) {
             throw new IllegalArgumentException("word must not be null or empty.");
         }
-        Line line = new Line(this, word);
+        Line line = new Line(word);
         lines.add(line);
         return line;
     }
@@ -73,7 +73,7 @@ public class Script implements IScript {
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException("words must not be null or empty.");
         }
-        Line line = new Line(this, words);
+        Line line = new Line(words);
         lines.add(line);
         return line;
     }
@@ -83,7 +83,7 @@ public class Script implements IScript {
         if (keyword == null || keyword.isEmpty()) {
             throw new IllegalArgumentException("word must not be null or empty.");
         }
-        Line line = new Line(this, keyword);
+        Line line = new Line(keyword);
         keywordLines.add(line);
         return line;
     }
@@ -93,7 +93,7 @@ public class Script implements IScript {
         if (keywords == null || keywords.length == 0) {
             throw new IllegalArgumentException("word must not be null or empty.");
         }
-        Line line = new Line(this, keywords);
+        Line line = new Line(keywords);
         keywordLines.add(line);
         return line;
     }
@@ -137,4 +137,34 @@ public class Script implements IScript {
         return null;
     }
 
+    /**
+     * Created by pt2121 on 7/4/15.
+     */
+    public class Line {
+        public final String[] words;
+        private Response response;
+
+        public Line(String keyword) {
+            this.words = new String[1];
+            words[0] = keyword;
+        }
+
+        public Line(String[] words) {
+            this.words = words;
+        }
+
+        public Script say(String string) {
+            this.response = new Response(string, null);
+            return Script.this;
+        }
+
+        public Script say(String string, Callback callback) {
+            this.response = new Response(string, callback);
+            return Script.this;
+        }
+
+        public Response respond() {
+            return response;
+        }
+    }
 }

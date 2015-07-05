@@ -3,13 +3,13 @@
  */
 public interface IScript {
 
-    Line whenHear(String word);
+    Script.Line whenHear(String word);
 
-    Line whenHear(String[] words);
+    Script.Line whenHear(String[] words);
 
-    Line whenHearKeyword(String keyword);
+    Script.Line whenHearKeyword(String keyword);
 
-    Line whenHearKeywords(String[] keywords);
+    Script.Line whenHearKeywords(String[] keywords);
 
     void deleteWord(String word);
 
