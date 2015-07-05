@@ -13,13 +13,27 @@ public interface IScript {
 
     void deleteWord(String word);
 
-    String query(String word);
+    Response query(String word);
 
-    String queryAll(String word);
+    Response queryAll(String word);
+
+    interface Callback {
+        void call();
+    }
+
+    class Response {
+        String line;
+        Callback callback;
+
+        public Response(String line, Callback callback) {
+            this.line = line;
+            this.callback = callback;
+        }
+    }
 
     class Line {
         public final String[] words;
-        private String line;
+        private Response response;
         private Script script;
 
         public Line(Script script, String keyword) {
@@ -33,13 +47,18 @@ public interface IScript {
             this.words = words;
         }
 
-        public Script say(String response) {
-            this.line = response;
+        public Script say(String string) {
+            this.response = new Response(string, null);
             return script;
         }
 
-        public String respond() {
-            return line;
+        public Script say(String string, Callback callback) {
+            this.response = new Response(string, callback);
+            return script;
+        }
+
+        public Response respond() {
+            return response;
         }
     }
 }

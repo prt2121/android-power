@@ -8,13 +8,13 @@ import java.util.Map;
  */
 public class Script implements IScript {
 
-    private Map<String, String> wordMap = new HashMap<String, String>();
+    private Map<String, Response> wordMap = new HashMap<>();
 
-    private Map<String, String> keywordMap = new HashMap<String, String>();
+    private Map<String, Response> keywordMap = new HashMap<>();
 
-    private List<Line> lines = new ArrayList<Line>();
+    private List<Line> lines = new ArrayList<>();
 
-    private List<Line> keywordLines = new ArrayList<Line>();
+    private List<Line> keywordLines = new ArrayList<>();
 
     private boolean ignoreCase;
 
@@ -30,26 +30,26 @@ public class Script implements IScript {
     public Script build() {
         if (ignoreCase) {
             for (Line line : lines) {
-                String respond = line.respond().toLowerCase();
+                Response respond = line.respond();
                 for (String word : line.words) {
                     wordMap.put(word.toLowerCase(), respond);
                 }
             }
             for (Line line : keywordLines) {
-                String respond = line.respond().toLowerCase();
+                Response respond = line.respond();
                 for (String keyword : line.words) {
                     keywordMap.put(keyword.toLowerCase(), respond);
                 }
             }
         } else {
             for (Line line : lines) {
-                String respond = line.respond();
+                Response respond = line.respond();
                 for (String word : line.words) {
                     wordMap.put(word, respond);
                 }
             }
             for (Line line : keywordLines) {
-                String respond = line.respond();
+                Response respond = line.respond();
                 for (String keyword : line.words) {
                     keywordMap.put(keyword, respond);
                 }
@@ -108,7 +108,7 @@ public class Script implements IScript {
     }
 
     @Override
-    public String query(String text) {
+    public Response query(String text) {
         if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException("text must not be null or empty.");
         }
@@ -120,7 +120,7 @@ public class Script implements IScript {
     }
 
     @Override
-    public String queryAll(String text) {
+    public Response queryAll(String text) {
         if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException("text must not be null or empty.");
         }
@@ -128,9 +128,9 @@ public class Script implements IScript {
         if (wordMap.containsKey(text)) {
             return wordMap.get(text);
         }
-        for (Map.Entry<String, String> entry : keywordMap.entrySet()) {
+        for (Map.Entry<String, Response> entry : keywordMap.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue();
+            Response value = entry.getValue();
             if (text.contains(key))
                 return value;
         }
