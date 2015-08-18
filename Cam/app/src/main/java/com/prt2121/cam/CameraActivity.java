@@ -26,7 +26,7 @@ public class CameraActivity extends AppCompatActivity {
 
     public static final int MEDIA_TYPE_IMAGE = 1;
 
-    public static final int MEDIA_TYPE_VIDEO = 2;
+    public static final String DIRECTORY = "MyCameraApp";
 
     private Camera mCamera;
 
@@ -35,27 +35,29 @@ public class CameraActivity extends AppCompatActivity {
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
         @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
-            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-            if (pictureFile == null) {
-                Log.d(TAG, "Error creating media file, check storage permissions.");
-                return;
-            }
-
-            try {
-                // TODO: use io thread?
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            } finally {
-                if (mCamera != null) {
-                    mCamera.startPreview();
+        public void onPictureTaken(final byte[] data, Camera camera) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                    if (pictureFile == null) {
+                        Log.d(TAG, "Error creating media file.");
+                        return;
+                    }
+                    try {
+                        FileOutputStream fos = new FileOutputStream(pictureFile);
+                        fos.write(data);
+                        fos.close();
+                    } catch (FileNotFoundException e) {
+                        Log.d(TAG, "File not found: " + e.getMessage());
+                    } catch (IOException e) {
+                        Log.d(TAG, "Error accessing file: " + e.getMessage());
+                    }
                 }
+            }).start();
+
+            if (mCamera != null) {
+                mCamera.startPreview();
             }
         }
 
@@ -85,8 +87,12 @@ public class CameraActivity extends AppCompatActivity {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
+        if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            return null;
+        }
+
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+                Environment.DIRECTORY_PICTURES), DIRECTORY);
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
@@ -104,9 +110,6 @@ public class CameraActivity extends AppCompatActivity {
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }
@@ -145,14 +148,12 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause");
         releaseCameraAndPreview();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
         // Create our Preview view and set it as the content of our activity.
         if (mCamera != null) {
             mPreview = new CameraPreview(this, mCamera);
