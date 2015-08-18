@@ -61,6 +61,8 @@ public class CameraActivity extends AppCompatActivity {
 
     };
 
+    private FrameLayout mFrameLayout;
+
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance() {
         Camera c = null;
@@ -120,11 +122,42 @@ public class CameraActivity extends AppCompatActivity {
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
+
+    }
+
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+    }
+
+    private void releaseCameraAndPreview() {
+        if (mPreview != null) {
+            mFrameLayout.removeView(mPreview);
+            mPreview.setCamera(null);
+            mPreview = null;
+        }
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+        releaseCameraAndPreview();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
         // Create our Preview view and set it as the content of our activity.
         if (mCamera != null) {
             mPreview = new CameraPreview(this, mCamera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            preview.addView(mPreview);
+            mFrameLayout = (FrameLayout) findViewById(R.id.camera_preview);
+            mFrameLayout.addView(mPreview);
             Button captureButton = (Button) findViewById(R.id.button_capture);
             captureButton.setOnClickListener(
                     new View.OnClickListener() {
@@ -136,26 +169,6 @@ public class CameraActivity extends AppCompatActivity {
                     }
             );
         }
-
-    }
-
-    /** Check if this device has a camera */
-    private boolean checkCameraHardware(Context context) {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-    }
-
-    private void releaseCameraAndPreview() {
-        mPreview.setCamera(null);
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseCameraAndPreview();
     }
 
 }
