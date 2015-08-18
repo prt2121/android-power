@@ -37,11 +37,3 @@ public interface CamfindService {
     Observable<Response> imageResponse(@Header("Authorization") String key,
             @Path("token") String token);
 }
-
-//    HttpResponse<JsonNode> request = Unirest
-//            .post("https://camfind.p.mashape.com/image_requests")
-//            .header("X-Mashape-Authorization",
-//                    "A0MYOpCsdfasdgadfadafgdj7vsdfe")
-//            .field("image_request[locale]", "en_US")
-//            .field("image_request[image]",
-//                    new File("your Image path")).asJson();
