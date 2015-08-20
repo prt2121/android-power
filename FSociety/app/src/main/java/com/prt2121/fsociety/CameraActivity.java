@@ -1,5 +1,11 @@
 package com.prt2121.fsociety;
 
+import com.prt2121.fsociety.camfind.CamFind;
+import com.prt2121.fsociety.camfind.CamFindService;
+import com.prt2121.fsociety.camfind.ICamFind;
+import com.prt2121.fsociety.camfind.model.CamFindResult;
+import com.prt2121.fsociety.camfind.model.CamFindToken;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -17,6 +23,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import retrofit.RestAdapter;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -49,6 +63,62 @@ public class CameraActivity extends AppCompatActivity {
                         Log.d(TAG, "File not found: " + e.getMessage());
                     } catch (IOException e) {
                         Log.d(TAG, "Error accessing file: " + e.getMessage());
+                    } finally {
+                        final RestAdapter restAdapter = new RestAdapter.Builder()
+                                .setEndpoint(CamFindService.CAMFIND_URL)
+                                .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+                                .build();
+
+                        final CamFindService service = restAdapter.create(CamFindService.class);
+                        final ICamFind camFind = new CamFind();
+
+                        final Observable<CamFindResult> result =
+                                camFind.postImage(service, pictureFile.getAbsolutePath())
+                                        .map(new Func1<CamFindToken, String>() {
+                                            @Override
+                                            public String call(CamFindToken camFindToken) {
+                                                return camFindToken.getToken();
+                                            }
+                                        })
+                                        .cache()
+                                        .flatMap(new Func1<String, Observable<CamFindResult>>() {
+                                            @Override
+                                            public Observable<CamFindResult> call(String s) {
+                                                return camFind.getCamFindImageResponse(service, s);
+                                            }
+                                        });
+
+                        // http://blog.freeside.co/2015/01/29/simple-background-polling-with-rxjava/
+                        // http://stackoverflow.com/questions/28369689/android-polling-a-server-with-retrofit
+                        Observable.interval(12, TimeUnit.SECONDS, Schedulers.io())
+                                .startWith(-1L)
+                                .flatMap(new Func1<Long, Observable<CamFindResult>>() {
+                                    @Override
+                                    public Observable<CamFindResult> call(Long tick) {
+                                        Log.d("Retrofit", "token " + tick);
+                                        return result;
+                                    }
+                                })
+                                .filter(new Func1<CamFindResult, Boolean>() {
+                                    @Override
+                                    public Boolean call(CamFindResult camFindResult) {
+                                        return camFindResult.getStatus().equalsIgnoreCase("completed");
+                                    }
+                                })
+                                .take(1)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Action1<CamFindResult>() {
+                                    @Override
+                                    public void call(CamFindResult camFindResult) {
+                                        Log.d(TAG, camFindResult.getName());
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        Log.d(TAG, throwable.getLocalizedMessage());
+                                    }
+                                });
                     }
                 }
             }).start();
@@ -151,3 +221,27 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 }
+
+//                                .flatMap(new Func1<Long, Observable<CamFindResult>>() {
+//                                    @Override
+//                                    public Observable<CamFindResult> call(Long aLong) {
+//                                        return tokenObservable.flatMap(new Func1<String, Observable<CamFindResult>>() {
+//                                            @Override
+//                                            public Observable<CamFindResult> call(String s) {
+//                                                return camFind.getCamFindImageResponse(service, s);
+//                                            }
+//                                        });
+//                                    }
+//                                })
+//                                .filter(/* check if it is a valid new game state */)
+//                                .take(1)
+
+//                        Observable.interval(30, TimeUnit.SECONDS, Schedulers.io())
+//                                .map(tick -> messageService.getRecentMessages())
+//                                .doOnError(err -> log.error("Error retrieving messages", err))
+//                                .retry()
+//                                .flatMap(Observable::from)
+//                                        // filter out any previously seen messages
+//                                .distinct()
+//                                .filter(message -> message.isFor(recipient))
+//                                .subscribe(message -> log.info(message.toString()));
