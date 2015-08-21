@@ -1,7 +1,7 @@
-package com.prt2121.fsociety.camfind;
+package com.prt2121.camfound;
 
-import com.prt2121.fsociety.camfind.model.CamFindResult;
-import com.prt2121.fsociety.camfind.model.CamFindToken;
+import com.prt2121.camfound.model.CamFindResult;
+import com.prt2121.camfound.model.CamFindToken;
 
 import retrofit.http.GET;
 import retrofit.http.Header;
@@ -22,7 +22,7 @@ public interface CamFindService {
 
     String DEFAULT_LOCALE = "en-US";
 
-    String CAMFIND_KEY = "JQsbNl9p3DnrYsq_5F6n6g";
+    String CAMFIND_KEY = "";
 
     // https://cloudsight.readme.io/docs/testinput
     // image_request[image]

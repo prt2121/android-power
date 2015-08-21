@@ -1,5 +1,4 @@
-
-package com.prt2121.fsociety.camfind.model;
+package com.prt2121.camfound.model;
 
 import com.google.gson.annotations.Expose;
 

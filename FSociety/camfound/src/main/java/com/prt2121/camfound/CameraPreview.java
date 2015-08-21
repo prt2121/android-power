@@ -1,4 +1,4 @@
-package com.prt2121.fsociety;
+package com.prt2121.camfound;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -10,6 +10,13 @@ import java.io.IOException;
 
 /**
  * Created by pt2121 on 8/17/15.
+ *
+ * This class is used to show camera preview.
+ * It uses the new {@link Camera} API for backward compatibility.
+ *
+ * <p>To access the device camera, you must declare the
+ * {@link android.Manifest.permission#CAMERA} permission in your Android
+ * Manifest.</p>
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -18,6 +25,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private SurfaceHolder mHolder;
 
     private Camera mCamera;
+
+    public CameraPreview(Context context) {
+        super(context);
+    }
 
     public CameraPreview(Context context, Camera camera) {
         super(context);
@@ -62,19 +73,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera.stopPreview();
         } catch (Exception e) {
-            // ignore: tried to stop a non-existent preview
+            Log.e(TAG, e.getMessage());
         }
 
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-
-        // start preview with new settings
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
-
         } catch (Exception e) {
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.e(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
 

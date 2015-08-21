@@ -1,7 +1,7 @@
-package com.prt2121.fsociety.camfind;
+package com.prt2121.camfound;
 
-import com.prt2121.fsociety.camfind.model.CamFindResult;
-import com.prt2121.fsociety.camfind.model.CamFindToken;
+import com.prt2121.camfound.model.CamFindResult;
+import com.prt2121.camfound.model.CamFindToken;
 
 import java.io.File;
 
@@ -14,14 +14,8 @@ import rx.Observable;
  */
 public class CamFind implements ICamFind {
 
-    public static final String TAG = CamFind.class.getSimpleName();
-
     /**
-     * Post a photo file to CamFind API
-     *
-     * @param service CamFindService
-     * @param path    a photo file path
-     * @return rx subscription
+     * {@inheritDoc}
      */
     public Observable<CamFindToken> postImage(CamFindService service, String path) {
         TypedString locale = new TypedString(CamFindService.DEFAULT_LOCALE);
@@ -31,6 +25,9 @@ public class CamFind implements ICamFind {
                 locale);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Observable<CamFindResult> getCamFindImageResponse(CamFindService service, String token) {
         return service.imageResponse("CloudSight " + CamFindService.CAMFIND_KEY, token);
     }

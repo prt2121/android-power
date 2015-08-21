@@ -1,10 +1,7 @@
-package com.prt2121.fsociety;
+package com.prt2121.camfound;
 
-import com.prt2121.fsociety.camfind.CamFind;
-import com.prt2121.fsociety.camfind.CamFindService;
-import com.prt2121.fsociety.camfind.ICamFind;
-import com.prt2121.fsociety.camfind.model.CamFindResult;
-import com.prt2121.fsociety.camfind.model.CamFindToken;
+import com.prt2121.camfound.model.CamFindResult;
+import com.prt2121.camfound.model.CamFindToken;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,8 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +29,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+/**
+ * Created by pt2121 on 8/17/15.
+ *
+ * This activity is used to capture a photo.
+ */
 public class CameraActivity extends AppCompatActivity {
 
     public static final String TAG = CameraActivity.class.getSimpleName();
@@ -88,8 +90,6 @@ public class CameraActivity extends AppCompatActivity {
                                             }
                                         });
 
-                        // http://blog.freeside.co/2015/01/29/simple-background-polling-with-rxjava/
-                        // http://stackoverflow.com/questions/28369689/android-polling-a-server-with-retrofit
                         Observable.interval(12, TimeUnit.SECONDS, Schedulers.io())
                                 .startWith(-1L)
                                 .flatMap(new Func1<Long, Observable<CamFindResult>>() {
@@ -132,7 +132,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private FrameLayout mFrameLayout;
 
-    private Button mCaptureButton;
+    private ImageButton mCaptureButton;
 
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance() {
@@ -160,8 +160,7 @@ public class CameraActivity extends AppCompatActivity {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
-        mediaFile = new File(dir.getPath() + File.separator +
-                "IMG_" + timeStamp + ".jpg");
+        mediaFile = new File(dir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
         return mediaFile;
     }
 
@@ -171,11 +170,14 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         if (checkCameraHardware(this)) {
-            // Create an instance of Camera
             mCamera = getCameraInstance();
         }
         mFrameLayout = (FrameLayout) findViewById(R.id.camera_preview);
-        mCaptureButton = (Button) findViewById(R.id.button_capture);
+        mCaptureButton = (ImageButton) findViewById(R.id.button_capture);
+
+        if (mCamera == null) {
+            mCaptureButton.setVisibility(View.GONE);
+        }
     }
 
     /** Check if this device has a camera */
@@ -221,27 +223,3 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 }
-
-//                                .flatMap(new Func1<Long, Observable<CamFindResult>>() {
-//                                    @Override
-//                                    public Observable<CamFindResult> call(Long aLong) {
-//                                        return tokenObservable.flatMap(new Func1<String, Observable<CamFindResult>>() {
-//                                            @Override
-//                                            public Observable<CamFindResult> call(String s) {
-//                                                return camFind.getCamFindImageResponse(service, s);
-//                                            }
-//                                        });
-//                                    }
-//                                })
-//                                .filter(/* check if it is a valid new game state */)
-//                                .take(1)
-
-//                        Observable.interval(30, TimeUnit.SECONDS, Schedulers.io())
-//                                .map(tick -> messageService.getRecentMessages())
-//                                .doOnError(err -> log.error("Error retrieving messages", err))
-//                                .retry()
-//                                .flatMap(Observable::from)
-//                                        // filter out any previously seen messages
-//                                .distinct()
-//                                .filter(message -> message.isFor(recipient))
-//                                .subscribe(message -> log.info(message.toString()));
