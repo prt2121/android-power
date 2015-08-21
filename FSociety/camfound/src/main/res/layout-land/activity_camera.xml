@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -8,15 +9,15 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_capture"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:contentDescription="@string/camfound_capture"
-        android:src="@drawable/ic_camfound_camera_button"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/camfound_capture"
+        app:elevation="4dp" />
 
 </RelativeLayout>

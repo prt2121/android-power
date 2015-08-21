@@ -3,6 +3,8 @@ package com.prt2121.camfound;
 import com.prt2121.camfound.model.CamFindResult;
 import com.prt2121.camfound.model.CamFindToken;
 
+import java.io.File;
+
 import rx.Observable;
 
 /**
@@ -27,5 +29,9 @@ public interface ICamFind {
      * @return a result of CamFind image recognition
      */
     Observable<CamFindResult> getCamFindImageResponse(CamFindService service, String token);
+
+    Observable<CamFindResult> pollCamFindForStatus(final Observable<CamFindResult> result);
+
+    Observable<CamFindResult> getCamFindResultObservable(File pictureFile, final CamFindService service);
 
 }
