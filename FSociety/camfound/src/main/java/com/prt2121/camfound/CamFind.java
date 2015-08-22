@@ -19,6 +19,12 @@ import rx.schedulers.Schedulers;
  */
 public class CamFind implements ICamFind {
 
+    public static String mCamfindKey = "";
+
+    public CamFind(String key) {
+        mCamfindKey = key;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -26,7 +32,7 @@ public class CamFind implements ICamFind {
     public Observable<CamFindToken> postImage(CamFindService service, String path) {
         TypedString locale = new TypedString(CamFindService.DEFAULT_LOCALE);
         TypedFile photoFile = new TypedFile("image/*", new File(path));
-        return service.imageRequest("CloudSight " + CamFindService.CAMFIND_KEY,
+        return service.imageRequest("CloudSight " + mCamfindKey,
                 photoFile,
                 locale);
     }
@@ -36,7 +42,7 @@ public class CamFind implements ICamFind {
      */
     @Override
     public Observable<CamFindResult> getCamFindImageResponse(CamFindService service, String token) {
-        return service.imageResponse("CloudSight " + CamFindService.CAMFIND_KEY, token);
+        return service.imageResponse("CloudSight " + mCamfindKey, token);
     }
 
     /**

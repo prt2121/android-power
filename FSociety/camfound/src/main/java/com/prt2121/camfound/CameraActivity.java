@@ -2,10 +2,13 @@ package com.prt2121.camfound;
 
 import com.prt2121.camfound.model.CamFindResult;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -28,6 +31,8 @@ public class CameraActivity extends AppCompatActivity {
 
     public static final String TAG = CameraActivity.class.getSimpleName();
 
+    public static final String CAMFIND_RESULT = "CamFind_result";
+
     private Camera mCamera;
 
     private CameraPreview mPreview;
@@ -36,49 +41,38 @@ public class CameraActivity extends AppCompatActivity {
 
     private FloatingActionButton mCaptureButton;
 
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+    public static String CAMFIND_KEY_EXTRA = "CamFind_key_extra";
 
-        @Override
-        public void onPictureTaken(final byte[] data, Camera camera) {
-            new Thread(() -> {
-                final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
-                if (pictureFile == null) {
-                    Log.d(TAG, "Error creating media file.");
-                    return;
-                }
-                Log.d(TAG, pictureFile.getAbsolutePath());
-                try {
-                    FileOutputStream fos = new FileOutputStream(pictureFile);
-                    fos.write(data);
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    Log.d(TAG, "File not found: " + e.getMessage());
-                } catch (IOException e) {
-                    Log.d(TAG, "Error accessing file: " + e.getMessage());
-                } finally {
-                    final CamFindService service = CamFindUtils.getCamFindService();
-                    final ICamFind camFind = new CamFind();
-                    final Observable<CamFindResult> result =
-                            camFind.getCamFindResultObservable(pictureFile, service);
-                    camFind.pollCamFindForStatus(result)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(camFindResult -> Log.d(CameraActivity.TAG, camFindResult.getName()),
-                                    throwable -> Log.e(CameraActivity.TAG, throwable.getLocalizedMessage()));
-                }
-            }).start();
+    private String mCamFindKey;
 
-            if (mCamera != null) {
-                mCamera.startPreview();
-            }
+    public static void startCameraActivityForResult(Activity activity,
+            String camFindKey,
+            int requestCode) {
+        if (TextUtils.isEmpty(camFindKey)) {
+            // TODO: will improve this?
+            throw new IllegalArgumentException("camFindKey can't be null or empty!");
         }
 
-    };
+        Intent intent = new Intent(activity, CameraActivity.class);
+        intent.putExtra(CAMFIND_KEY_EXTRA, camFindKey);
+        activity.startActivityForResult(intent, requestCode);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        Intent intent = getIntent();
+        if (intent == null) {
+            returnAndFinish(RESULT_CANCELED, "Gimme CamFind Key");
+            return;
+        }
+
+        mCamFindKey = intent.getStringExtra(CAMFIND_KEY_EXTRA);
+        if (TextUtils.isEmpty(mCamFindKey)) {
+            returnAndFinish(RESULT_CANCELED, "Gimme CamFind Key");
+        }
 
         if (CamFindUtils.checkCameraHardware(this)) {
             mCamera = CamFindUtils.getCameraInstance();
@@ -89,6 +83,13 @@ public class CameraActivity extends AppCompatActivity {
         if (mCamera == null) {
             mCaptureButton.setVisibility(View.GONE);
         }
+    }
+
+    private void returnAndFinish(int resultCode, String result) {
+        Intent intent = new Intent();
+        intent.putExtra(CAMFIND_RESULT, result);
+        setResult(resultCode, intent);
+        finish();
     }
 
     private void releaseCameraAndPreview() {
@@ -124,5 +125,44 @@ public class CameraActivity extends AppCompatActivity {
             );
         }
     }
+
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+
+        @Override
+        public void onPictureTaken(final byte[] data, Camera camera) {
+            new Thread(() -> {
+                final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
+                if (pictureFile == null) {
+                    Log.d(TAG, "Error creating media file.");
+                    return;
+                }
+                Log.d(TAG, pictureFile.getAbsolutePath());
+                try {
+                    FileOutputStream fos = new FileOutputStream(pictureFile);
+                    fos.write(data);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    Log.d(TAG, "File not found: " + e.getMessage());
+                } catch (IOException e) {
+                    Log.d(TAG, "Error accessing file: " + e.getMessage());
+                } finally {
+                    final CamFindService service = CamFindUtils.getCamFindService();
+                    final ICamFind camFind = new CamFind(mCamFindKey);
+                    final Observable<CamFindResult> result =
+                            camFind.getCamFindResultObservable(pictureFile, service);
+                    camFind.pollCamFindForStatus(result)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(camFindResult -> returnAndFinish(RESULT_OK, camFindResult.getName()),
+                                    throwable -> returnAndFinish(RESULT_CANCELED, throwable.getLocalizedMessage()));
+                }
+            }).start();
+
+            if (mCamera != null) {
+                mCamera.startPreview();
+            }
+        }
+
+    };
 
 }

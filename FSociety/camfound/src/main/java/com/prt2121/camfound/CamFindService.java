@@ -24,8 +24,6 @@ public interface CamFindService {
 
     String DEFAULT_LOCALE = "en-US";
 
-    String CAMFIND_KEY = "";
-
     // https://cloudsight.readme.io/docs/testinput
     // image_request[image]
     // image_request[locale]
