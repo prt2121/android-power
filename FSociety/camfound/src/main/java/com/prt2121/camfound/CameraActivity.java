@@ -126,47 +126,32 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+    private Camera.PictureCallback mPicture = (data, camera) -> {
+        //releaseCameraAndPreview();
 
-        @Override
-        public void onPictureTaken(final byte[] data, Camera camera) {
-            releaseCameraAndPreview();
-
-//            ImageUtils.decodeSampledBitmapFromByte(CameraActivity.this, data);
-//
-//            ResizeAnimation animation = new ResizeAnimation.Builder().setView(mFrameLayout)
-//                    .setFromHeight(mFrameLayout.getHeight())
-//                    .setFromWidth(mFrameLayout.getWidth())
-//                    .setToHeight(mFrameLayout.getHeight() * 3 / 4)
-//                    .setToWidth(mFrameLayout.getWidth() * 3 / 4)
-//                    .createResizeAnimation();
-//            mFrameLayout.startAnimation(animation);
-
-            new Thread(() -> {
-                final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
-                if (pictureFile == null) {
-                    Log.d(TAG, "Error creating media file.");
-                    return;
-                }
-                Log.d(TAG, pictureFile.getAbsolutePath());
-                try {
-                    FileOutputStream fos = new FileOutputStream(pictureFile);
-                    fos.write(data);
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    Log.d(TAG, "File not found: " + e.getMessage());
-                } catch (IOException e) {
-                    Log.d(TAG, "Error accessing file: " + e.getMessage());
-                } finally {
-                    recognizeImage(pictureFile);
-                }
-            }).start();
+        new Thread(() -> {
+            final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file.");
+                return;
+            }
+            Log.d(TAG, pictureFile.getAbsolutePath());
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            } finally {
+                recognizeImage(pictureFile);
+            }
+        }).start();
 
 //            if (mCamera != null) {
 //                mCamera.startPreview();
 //            }
-        }
-
     };
 
     private void recognizeImage(File pictureFile) {

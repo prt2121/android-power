@@ -18,7 +18,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_margin="16dp"
-        android:contentDescription="@string/camfound_capture"
         app:elevation="4dp" />
 
 </RelativeLayout>
