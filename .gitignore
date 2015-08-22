@@ -38,3 +38,5 @@ Envi/app/src/main/res/
 Envi/app/src/main/res/values/google_maps_api.xml
 Envi/build.gradle
 Envi/app/build.gradle
+
+FSociety/app/src/main/res/values/secret.xml
