@@ -1,15 +1,16 @@
 <manifest
     package="com.prt2121.camfound"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="false"
-        android:theme="@style/AppTheme">
+        android:theme="@style/CamFoundAppTheme"
+        tools:replace="android:theme">
         <activity
             android:name=".CamActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
     </application>
 
 </manifest>
