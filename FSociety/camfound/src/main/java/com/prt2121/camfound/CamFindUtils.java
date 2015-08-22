@@ -28,7 +28,7 @@ public class CamFindUtils {
             c = Camera.open(); // attempt to get a Camera instance
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
-            Log.e(CameraActivity.TAG, "Camera is not available " + e.getMessage());
+            Log.e(CamActivity.TAG, "Camera is not available " + e.getMessage());
         }
         return c; // returns null if camera is unavailable
     }
@@ -39,7 +39,7 @@ public class CamFindUtils {
         // Create the storage directory if it does not exist
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                Log.d(CameraActivity.TAG, "failed to create directory");
+                Log.d(CamActivity.TAG, "failed to create directory");
                 return null;
             }
         }

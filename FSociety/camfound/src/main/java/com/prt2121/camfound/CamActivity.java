@@ -27,9 +27,9 @@ import rx.schedulers.Schedulers;
  *
  * This activity is used to capture a photo.
  */
-public class CameraActivity extends AppCompatActivity {
+public class CamActivity extends AppCompatActivity {
 
-    public static final String TAG = CameraActivity.class.getSimpleName();
+    public static final String TAG = CamActivity.class.getSimpleName();
 
     public static final String CAMFIND_RESULT = "CamFind_result";
 
@@ -53,7 +53,7 @@ public class CameraActivity extends AppCompatActivity {
             throw new IllegalArgumentException("camFindKey can't be null or empty!");
         }
 
-        Intent intent = new Intent(activity, CameraActivity.class);
+        Intent intent = new Intent(activity, CamActivity.class);
         intent.putExtra(CAMFIND_KEY_EXTRA, camFindKey);
         activity.startActivityForResult(intent, requestCode);
     }

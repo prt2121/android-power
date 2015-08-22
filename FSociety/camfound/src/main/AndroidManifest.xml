@@ -6,7 +6,7 @@
         android:allowBackup="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.prt2121.camfound.CameraActivity"
+            android:name=".CamActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
