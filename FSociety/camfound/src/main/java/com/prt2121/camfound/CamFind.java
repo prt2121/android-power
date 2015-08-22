@@ -14,6 +14,8 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by pt2121 on 8/19/15.
+ *
+ * The class facilitates communication with CamFind API
  */
 public class CamFind implements ICamFind {
 
@@ -42,21 +44,15 @@ public class CamFind implements ICamFind {
      */
     @Override
     public Observable<CamFindResult> pollCamFindForStatus(final Observable<CamFindResult> result) {
-        return Observable.interval(12, TimeUnit.SECONDS, Schedulers.io())
-                .startWith(-1L)
-                .flatMap(new Func1<Long, Observable<CamFindResult>>() {
-                    @Override
-                    public Observable<CamFindResult> call(Long tick) {
-                        return result;
-                    }
-                })
-                .filter(new Func1<CamFindResult, Boolean>() {
-                    @Override
-                    public Boolean call(CamFindResult camFindResult) {
-                        return camFindResult.getStatus().equalsIgnoreCase("completed");
-                    }
-                })
-                .take(1);
+        return pollCamFindForStatus(12, result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Observable<CamFindResult> pollCamFindForStatus(int second, final Observable<CamFindResult> result) {
+        return poll(second, result, camFindResult -> camFindResult.getStatus().equalsIgnoreCase("completed"));
     }
 
     /**
@@ -65,19 +61,28 @@ public class CamFind implements ICamFind {
     @Override
     public Observable<CamFindResult> getCamFindResultObservable(File pictureFile, final CamFindService service) {
         return postImage(service, pictureFile.getAbsolutePath())
-                .map(new Func1<CamFindToken, String>() {
-                    @Override
-                    public String call(CamFindToken camFindToken) {
-                        return camFindToken.getToken();
-                    }
-                })
+                .map(CamFindToken::getToken)
                 .cache()
-                .flatMap(new Func1<String, Observable<CamFindResult>>() {
-                    @Override
-                    public Observable<CamFindResult> call(String s) {
-                        return getCamFindImageResponse(service, s);
-                    }
-                });
+                .flatMap(s -> getCamFindImageResponse(service, s));
+    }
+
+    /**
+     * Poll the observable until it emits something that matches a predicate.
+     *
+     * @param second     interval in second
+     * @param observable stream
+     * @param predicate  condition
+     * @param <T>        type
+     * @return the first observable that match the predicate
+     */
+    public static <T> Observable<T> poll(int second,
+            final Observable<T> observable,
+            Func1<? super T, Boolean> predicate) {
+        return Observable.interval(second, TimeUnit.SECONDS, Schedulers.io())
+                .startWith(-1L)
+                .flatMap(tick -> observable)
+                .filter(predicate)
+                .take(1);
     }
 
 }

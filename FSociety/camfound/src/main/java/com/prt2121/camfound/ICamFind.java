@@ -9,6 +9,8 @@ import rx.Observable;
 
 /**
  * Created by pt2121 on 8/19/15.
+ *
+ * CamFind Interface facilitating communication with CamFind API
  */
 public interface ICamFind {
 
@@ -30,8 +32,30 @@ public interface ICamFind {
      */
     Observable<CamFindResult> getCamFindImageResponse(CamFindService service, String token);
 
+    /**
+     * Polling CamFind API every 12 seconds until the result is ready: status is 'completed'.
+     *
+     * @param result the CamFindResult observable
+     * @return the CamFindResult observable with 'completed' status
+     */
     Observable<CamFindResult> pollCamFindForStatus(final Observable<CamFindResult> result);
 
+    /**
+     * Polling CamFind API until the result is ready: status is 'completed'.
+     *
+     * @param second polling interval
+     * @param result the CamFindResult observable
+     * @return the CamFindResult observable with 'completed' status
+     */
+    Observable<CamFindResult> pollCamFindForStatus(int second, final Observable<CamFindResult> result);
+
+    /**
+     * Post pictureFile to CamFind API.
+     *
+     * @param pictureFile a picture file
+     * @param service     CamFind service
+     * @return the CamFindResult observable
+     */
     Observable<CamFindResult> getCamFindResultObservable(File pictureFile, final CamFindService service);
 
 }

@@ -15,6 +15,8 @@ import rx.Observable;
 
 /**
  * Created by pt2121 on 8/16/15.
+ *
+ * CamFind interface for Retrofit
  */
 public interface CamFindService {
 

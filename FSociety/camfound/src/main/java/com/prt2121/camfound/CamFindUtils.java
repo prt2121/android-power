@@ -14,6 +14,8 @@ import retrofit.RestAdapter;
 
 /**
  * Created by pt2121 on 8/21/15.
+ *
+ * Utils
  */
 public class CamFindUtils {
 

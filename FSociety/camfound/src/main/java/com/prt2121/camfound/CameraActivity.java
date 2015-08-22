@@ -17,7 +17,6 @@ import java.io.IOException;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -41,43 +40,31 @@ public class CameraActivity extends AppCompatActivity {
 
         @Override
         public void onPictureTaken(final byte[] data, Camera camera) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
-                    if (pictureFile == null) {
-                        Log.d(TAG, "Error creating media file.");
-                        return;
-                    }
-                    Log.d(TAG, pictureFile.getAbsolutePath());
-                    try {
-                        FileOutputStream fos = new FileOutputStream(pictureFile);
-                        fos.write(data);
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        Log.d(TAG, "File not found: " + e.getMessage());
-                    } catch (IOException e) {
-                        Log.d(TAG, "Error accessing file: " + e.getMessage());
-                    } finally {
-                        final CamFindService service = CamFindUtils.getCamFindService();
-                        final ICamFind camFind = new CamFind();
-                        final Observable<CamFindResult> result =
-                                camFind.getCamFindResultObservable(pictureFile, service);
-                        camFind.pollCamFindForStatus(result)
-                                .subscribeOn(Schedulers.newThread())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Action1<CamFindResult>() {
-                                    @Override
-                                    public void call(CamFindResult camFindResult) {
-                                        Log.d(CameraActivity.TAG, camFindResult.getName());
-                                    }
-                                }, new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable throwable) {
-                                        Log.e(CameraActivity.TAG, throwable.getLocalizedMessage());
-                                    }
-                                });
-                    }
+            new Thread(() -> {
+                final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
+                if (pictureFile == null) {
+                    Log.d(TAG, "Error creating media file.");
+                    return;
+                }
+                Log.d(TAG, pictureFile.getAbsolutePath());
+                try {
+                    FileOutputStream fos = new FileOutputStream(pictureFile);
+                    fos.write(data);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    Log.d(TAG, "File not found: " + e.getMessage());
+                } catch (IOException e) {
+                    Log.d(TAG, "Error accessing file: " + e.getMessage());
+                } finally {
+                    final CamFindService service = CamFindUtils.getCamFindService();
+                    final ICamFind camFind = new CamFind();
+                    final Observable<CamFindResult> result =
+                            camFind.getCamFindResultObservable(pictureFile, service);
+                    camFind.pollCamFindForStatus(result)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(camFindResult -> Log.d(CameraActivity.TAG, camFindResult.getName()),
+                                    throwable -> Log.e(CameraActivity.TAG, throwable.getLocalizedMessage()));
                 }
             }).start();
 
@@ -130,12 +117,9 @@ public class CameraActivity extends AppCompatActivity {
             mPreview = new CameraPreview(this, mCamera);
             mFrameLayout.addView(mPreview);
             mCaptureButton.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // get an image from the camera
-                            mCamera.takePicture(null, null, mPicture);
-                        }
+                    v -> {
+                        // get an image from the camera
+                        mCamera.takePicture(null, null, mPicture);
                     }
             );
         }
