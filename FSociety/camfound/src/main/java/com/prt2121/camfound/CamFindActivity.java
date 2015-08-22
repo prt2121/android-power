@@ -8,6 +8,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import java.io.File;
 
@@ -56,6 +61,7 @@ public class CamFindActivity extends CameraActivity {
 
     @Override
     public void returnPhotoUri(Uri uri) {
+        showProgress();
         recognizeImage(new File(uri.getPath()));
     }
 
@@ -76,5 +82,17 @@ public class CamFindActivity extends CameraActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(camFindResult -> returnAndFinish(RESULT_OK, camFindResult.getName()),
                         throwable -> returnAndFinish(RESULT_CANCELED, throwable.getLocalizedMessage()));
+    }
+
+    private void showProgress() {
+        ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+        );
+        ((ViewGroup) findViewById(android.R.id.content)).addView(progressBar, params);
     }
 }

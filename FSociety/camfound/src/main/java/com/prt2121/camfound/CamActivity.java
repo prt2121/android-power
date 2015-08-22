@@ -10,8 +10,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -128,7 +131,6 @@ public class CamActivity extends AppCompatActivity {
 
     private Camera.PictureCallback mPicture = (data, camera) -> {
         //releaseCameraAndPreview();
-
         new Thread(() -> {
             final File pictureFile = CamFindUtils.getOutputMediaFile(getFilesDir());
             if (pictureFile == null) {
