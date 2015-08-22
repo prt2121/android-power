@@ -50,7 +50,7 @@ public class CamFind implements ICamFind {
      */
     @Override
     public Observable<CamFindResult> pollCamFindForStatus(final Observable<CamFindResult> result) {
-        return pollCamFindForStatus(12, result);
+        return pollCamFindForStatus(4, result);
     }
 
     /**

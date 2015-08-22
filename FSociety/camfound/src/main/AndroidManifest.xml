@@ -11,6 +11,10 @@
             android:name=".CamActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
+        <activity
+            android:name=".CamFindActivity" />
+
     </application>
 
 </manifest>

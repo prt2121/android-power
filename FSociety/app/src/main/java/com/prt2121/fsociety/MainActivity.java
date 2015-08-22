@@ -1,6 +1,6 @@
 package com.prt2121.fsociety;
 
-import com.prt2121.camfound.CamActivity;
+import com.prt2121.camfound.CamFindActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +17,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CamActivity.startCameraActivityForResult(this, getString(R.string.key), 777);
+        //CamActivity.startCameraActivityForResult(this, getString(R.string.key), 777);
+
+        CamFindActivity.startCamFindActivityForResult(this, getString(R.string.key), 777);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String result = data.getStringExtra(CamActivity.CAMFIND_RESULT);
+        String result = data.getStringExtra(CamFindActivity.CAMFIND_RESULT);
         Log.d(TAG, result);
 
         MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager()
