@@ -1,6 +1,7 @@
 package vandy.mooc.view.ui;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,11 @@ public class VideoAdapter
         TextView titleText =
                 (TextView) convertView.findViewById(R.id.tvVideoTitle);
         titleText.setText(video.getName());
+        TextView likeNumber =
+                (TextView) convertView.findViewById(R.id.tvVideoLikeNumber);
+
+        Log.d(VideoAdapter.class.getSimpleName(), "like " + video.getLikes());
+        likeNumber.setText(String.valueOf(video.getLikes()));
 
         return convertView;
     }

@@ -23,25 +23,12 @@ import vandy.mooc.view.VideoListActivity;
 public class LoginActivity extends Activity {
 
     /**
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "admin:pass",
-            "user0:pass",
-            "user1:pass",
-            "user2:pass",
-            "user3:pass",
-            "user4:pass",
-            "user5:pass"
-    };
-
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mUsernameView;
 
     private EditText mPasswordView;
 
@@ -55,7 +42,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.username);
+        mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -92,11 +79,11 @@ public class LoginActivity extends Activity {
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mUsernameView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String email = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -104,8 +91,8 @@ public class LoginActivity extends Activity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mUsernameView.setError(getString(R.string.error_field_required));
+            focusView = mUsernameView;
             cancel = true;
         }
 
@@ -207,5 +194,16 @@ public class LoginActivity extends Activity {
             showProgress(false);
         }
     }
+
+    private static final String[] DUMMY_CREDENTIALS = new String[]{
+            "admin:pass",
+            "user0:pass",
+            "user1:pass",
+            "user2:pass",
+            "user3:pass",
+            "user4:pass",
+            "user5:pass"
+    };
+
 }
 

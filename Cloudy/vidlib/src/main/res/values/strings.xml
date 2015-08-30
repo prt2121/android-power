@@ -11,18 +11,18 @@
 
     <string name="pref_protocol_title">Protocol </string>
     <string name="pref_protocol_dialog_title">Select Protocol </string>
-    <string name="pref_protocol_default">http </string>
+    <string name="pref_protocol_default">https</string>
 
     <string name="pref_ip_title">IP Address </string>
     <string name="pref_ip_dialog_title">IP Address </string>
-    <string name="pref_ip_default">0.0.0.0</string>
+    <string name="pref_ip_default">10.0.2.2</string>
 
     <string name="pref_username_default">admin</string>
     <string name="pref_password_default">pass</string>
 
     <string name="pref_port_title">Port </string>
     <string name="pref_port_dialog_title">Port </string>
-    <string name="pref_port_default">8080</string>
+    <string name="pref_port_default">8443</string>
 
     <string-array name="pref_protocolTypes">
         <item >http</item>

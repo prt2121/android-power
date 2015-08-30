@@ -11,17 +11,16 @@ public class Video {
 
     private long duration;
 
+    private long likes;
 
     public Video() {
     }
-
 
     public Video(String name, long duration) {
         super();
         this.name = name;
         this.duration = duration;
     }
-
 
     public Video(String name, String url, long duration) {
         super();
@@ -62,5 +61,11 @@ public class Video {
         this.id = id;
     }
 
+    public long getLikes() {
+        return likes;
+    }
 
+    public void setLikes(long likes) {
+        this.likes = likes;
+    }
 }

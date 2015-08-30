@@ -17,9 +17,7 @@ import java.util.regex.Pattern;
 import vandy.mooc.R;
 import vandy.mooc.common.Utils;
 
-
 public class SettingsActivity extends Activity {
-
 
     public static final String KEY_PREFERENCE_PROTOCOL =
             "pref_key_protocol";
@@ -36,7 +34,6 @@ public class SettingsActivity extends Activity {
     public static final String KEY_PREFERENCE_PASSWORD =
             "pref_key_password";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +46,6 @@ public class SettingsActivity extends Activity {
 
     }
 
-
     public class SettingsFragment extends PreferenceFragment
             implements OnSharedPreferenceChangeListener {
 
@@ -59,16 +55,13 @@ public class SettingsActivity extends Activity {
                         "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                         "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
-
         private Pattern pattern;
 
         private Matcher matcher;
 
-
         public SettingsFragment() {
 
         }
-
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -103,13 +96,11 @@ public class SettingsActivity extends Activity {
                     .unregisterOnSharedPreferenceChangeListener(this);
         }
 
-
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String key) {
             setPreferenceSummary(sharedPrefs, key);
 
         }
-
 
         private void setPreferenceSummary(SharedPreferences prefs, String key) {
 
@@ -126,13 +117,13 @@ public class SettingsActivity extends Activity {
                 String ip = etp.getText();
 
                 if (TextUtils.isEmpty(ip)) {
-                    editor.putString(KEY_PREFERENCE_IP_ADDRESS, "0.0.0.0");
-                    etp.setDefaultValue("0.0.0.0");
+                    editor.putString(KEY_PREFERENCE_IP_ADDRESS, "10.0.2.2");
+                    etp.setDefaultValue("10.0.2.2");
                     Utils.showToast(getActivity(), "IP Address cannot be empty");
 
                 } else if (!validateIp(ip)) {
-                    editor.putString(KEY_PREFERENCE_IP_ADDRESS, "0.0.0.0");
-                    etp.setDefaultValue("0.0.0.0");
+                    editor.putString(KEY_PREFERENCE_IP_ADDRESS, "10.0.2.2");
+                    etp.setDefaultValue("10.0.2.2");
                     Utils.showToast(getActivity(), "IP Address is invalid");
 
                 } else {
@@ -144,13 +135,13 @@ public class SettingsActivity extends Activity {
                 String portNo = etp.getText();
 
                 if (TextUtils.isEmpty(portNo)) {
-                    editor.putString(KEY_PREFERENCE_PORT, "8080");
-                    etp.setDefaultValue("8080");
+                    editor.putString(KEY_PREFERENCE_PORT, "8443");
+                    etp.setDefaultValue("8443");
                     Utils.showToast(getActivity(), "Port number cannot be empty");
 
                 } else if (!validatePortNo(portNo)) {
-                    editor.putString(KEY_PREFERENCE_PORT, "8080");
-                    etp.setDefaultValue("8080");
+                    editor.putString(KEY_PREFERENCE_PORT, "8443");
+                    etp.setDefaultValue("8443");
                     Utils.showToast(getActivity(), "Port number is invalid");
 
                 } else {
@@ -190,7 +181,6 @@ public class SettingsActivity extends Activity {
 
         }
 
-
         /**
          * Validate ip address with regular expression
          *
@@ -202,14 +192,11 @@ public class SettingsActivity extends Activity {
             return matcher.matches();
         }
 
-
         public boolean validatePortNo(String portNo) {
             //match a number with optional '-' and decimal.
             return portNo.matches("\\d+");
         }
 
-
     }
-
 
 }

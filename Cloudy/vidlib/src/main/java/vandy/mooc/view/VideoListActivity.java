@@ -66,7 +66,7 @@ public class VideoListActivity
      * Hook method called when a new instance of Activity is created.
      * One time initialization code goes here, e.g., storing Views.
      *
-     * @param Bundle object that contains saved state information.
+     * @param savedInstanceState object that contains saved state information.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +159,9 @@ public class VideoListActivity
 
             // Upload the Video.
             getOps().uploadVideo(data.getData());
+
+            // TODO
+
         } else {
             Utils.showToast(this, "Could not get video to upload");
         }

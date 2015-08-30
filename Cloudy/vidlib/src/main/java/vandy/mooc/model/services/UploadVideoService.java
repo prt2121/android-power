@@ -90,7 +90,10 @@ public class UploadVideoService
                 new VideoDataMediator(getApplicationContext());
 
         // Check if Video Upload is successful.
-        finishNotification(mVideoMediator.uploadVideo(getApplicationContext(),
+//        finishNotification(mVideoMediator.uploadVideo(getApplicationContext(),
+//                intent.getData()));
+
+        finishNotification(mVideoMediator.uploadVideoMetaData(getApplicationContext(),
                 intent.getData()));
 
         // Send the Broadcast to VideoListActivity that the Video
