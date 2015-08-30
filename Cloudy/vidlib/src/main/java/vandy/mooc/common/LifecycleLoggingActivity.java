@@ -9,23 +9,23 @@ import android.util.Log;
  * callbacks for logging various lifecycle events.
  */
 public abstract class LifecycleLoggingActivity extends Activity {
+
     /**
      * Debugging tag used by the Android logger.
      */
-    protected final static String TAG = 
-        LifecycleLoggingActivity.class.getSimpleName();
+    protected final static String TAG =
+            LifecycleLoggingActivity.class.getSimpleName();
 
     /**
      * Hook method called when a new instance of Activity is created. One time
      * initialization code should go here e.g. UI layout, some class scope
      * variable initialization. if finish() is called from onCreate no other
      * lifecycle callbacks are called except for onDestroy().
-     * 
-     * @param savedInstanceState
-     *            object that contains saved state information.
+     *
+     * @param savedInstanceState object that contains saved state information.
      */
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         // Always call super class for necessary
         // initialization/implementation.
         super.onCreate(savedInstanceState);
@@ -51,7 +51,7 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * those resources for the first time after onCreate().
      */
     @Override
-	protected void onStart() {
+    protected void onStart() {
         // Always call super class for necessary
         // initialization/implementation.
         super.onStart();
@@ -67,13 +67,13 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * the camera.
      */
     @Override
-	protected void onResume() {
+    protected void onResume() {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
         super.onResume();
         Log.d(TAG,
-              "onResume() - the activity has become visible (it is now \"resumed\")");
+                "onResume() - the activity has become visible (it is now \"resumed\")");
     }
 
     /**
@@ -84,13 +84,13 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * Often used to release exclusive resources.
      */
     @Override
-	protected void onPause() {
+    protected void onPause() {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
         super.onPause();
         Log.d(TAG,
-              "onPause() - another activity is taking focus (this activity is about to be \"paused\")");
+                "onPause() - another activity is taking focus (this activity is about to be \"paused\")");
     }
 
     /**
@@ -99,13 +99,13 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * activity is killed.
      */
     @Override
-	protected void onStop() {
+    protected void onStop() {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
         super.onStop();
         Log.d(TAG,
-              "onStop() - the activity is no longer visible (it is now \"stopped\")");
+                "onStop() - the activity is no longer visible (it is now \"stopped\")");
     }
 
     /**
@@ -113,7 +113,7 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * a call to onStart() and onResume().
      */
     @Override
-	protected void onRestart() {
+    protected void onRestart() {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
@@ -127,7 +127,7 @@ public abstract class LifecycleLoggingActivity extends Activity {
      * hosting process
      */
     @Override
-	protected void onDestroy() {
+    protected void onDestroy() {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.

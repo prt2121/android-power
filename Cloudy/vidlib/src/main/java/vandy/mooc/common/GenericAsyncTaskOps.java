@@ -12,7 +12,7 @@ public interface GenericAsyncTaskOps<Params, Progress, Result> {
      */
     // @@ Commented out until Android supports default methods in interfaces..
     // default void onPreExecute() {}
-    
+
     /**
      * Called in a background thread to process the @a params.
      */

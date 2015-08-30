@@ -1,5 +1,10 @@
 package vandy.mooc.model.mediator;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +21,6 @@ import vandy.mooc.model.mediator.webdata.VideoSvcApi;
 import vandy.mooc.utils.Constants;
 import vandy.mooc.utils.VideoMediaStoreUtils;
 import vandy.mooc.view.SettingsActivity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.preference.PreferenceManager;
 
 /**
  * Mediates communication between the Video Service and the local
@@ -28,101 +29,97 @@ import android.preference.PreferenceManager;
  * AsyncTask).
  */
 public class VideoDataMediator {
+
     /**
      * Status code to indicate that file is successfully
      * uploaded.
      */
     public static final String STATUS_UPLOAD_SUCCESSFUL =
-        "Upload succeeded";
-    
+            "Upload succeeded";
+
     /**
-     * Status code to indicate that file upload failed 
+     * Status code to indicate that file upload failed
      * due to large video size.
      */
     public static final String STATUS_UPLOAD_ERROR_FILE_TOO_LARGE =
-        "Upload failed: File too big";
-    
+            "Upload failed: File too big";
+
     /**
      * Status code to indicate that file upload failed.
      */
     public static final String STATUS_UPLOAD_ERROR =
-        "Upload failed";
-    
+            "Upload failed";
+
     /**
      * Defines methods that communicate with the Video Service.
      */
     private VideoSvcApi mVideoServiceProxy;
-    
+
     /**
      * Constructor that initializes the VideoDataMediator.
-     * 
-     * @param context
      */
     public VideoDataMediator(Context context) {
-    	
-    	SharedPreferences prefs = 
-    			PreferenceManager.getDefaultSharedPreferences(context);
-    	
-    	String serverProtocol = prefs
-    			                .getString(SettingsActivity.KEY_PREFERENCE_PROTOCOL,
-    			                           "");
-    	String serverIp = prefs
-    			            .getString(SettingsActivity.KEY_PREFERENCE_IP_ADDRESS,
-                                        "");
-    	String serverPort = prefs
-    			            .getString(SettingsActivity.KEY_PREFERENCE_PORT,
-                                       "");
-    	String userName = prefs
-    			            .getString(SettingsActivity.KEY_PREFERENCE_USER_NAME,
-                                       "");
-    	String password = prefs
-    			            .getString(SettingsActivity.KEY_PREFERENCE_PASSWORD,
-                                       "");
-    	
-    	String serverUrl = serverProtocol
-    			             + "://"
-    			             + serverIp
-    			             + ":"
-    			             + serverPort ;
-    	
+
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        String serverProtocol = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_PROTOCOL,
+                        "");
+        String serverIp = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_IP_ADDRESS,
+                        "");
+        String serverPort = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_PORT,
+                        "");
+        String userName = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_USER_NAME,
+                        "");
+        String password = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_PASSWORD,
+                        "");
+
+        String serverUrl = serverProtocol
+                + "://"
+                + serverIp
+                + ":"
+                + serverPort;
+
         // Initialize the VideoServiceProxy.
         mVideoServiceProxy =
-        		new SecuredRestBuilder()
-    			.setLoginEndpoint(serverUrl + VideoSvcApi.TOKEN_PATH)
-    			.setEndpoint(serverUrl)
-    			.setUsername(userName)
-    			.setPassword(password)
-    			.setClientId(Constants.CLIENT_ID)
-    			.setClient(new OkClient(UnsafeHttpsClient.getUnsafeOkHttpClient()))
-    			.setLogLevel(LogLevel.FULL)
-    			.build()
-    			.create(VideoSvcApi.class);
-        
+                new SecuredRestBuilder()
+                        .setLoginEndpoint(serverUrl + VideoSvcApi.TOKEN_PATH)
+                        .setEndpoint(serverUrl)
+                        .setUsername(userName)
+                        .setPassword(password)
+                        .setClientId(Constants.CLIENT_ID)
+                        .setClient(new OkClient(UnsafeHttpsClient.getUnsafeOkHttpClient()))
+                        .setLogLevel(LogLevel.FULL)
+                        .build()
+                        .create(VideoSvcApi.class);
+
     }
-    
-    
+
 
     /**
      * Uploads the Video having the given Id.  This Id is the Id of
      * Video in Android Video Content Provider.
-     * 
-     * @param videoId
-     *            Id of the Video to be uploaded.
      *
+     * @param videoId Id of the Video to be uploaded.
      * @return A String indicating the status of the video upload operation.
      */
     public String uploadVideo(Context context,
-                              Uri videoUri) {
+            Uri videoUri) {
         // Get the path of video file from videoUri.
         String filePath =
-            VideoMediaStoreUtils.getPath(context,
-                                         videoUri);
+                VideoMediaStoreUtils.getPath(context,
+                        videoUri);
 
         // Get the Video from Android Video Content Provider having
         // the given filePath.
         Video androidVideo =
-            VideoMediaStoreUtils.getVideo(context,
-                                          filePath);
+                VideoMediaStoreUtils.getVideo(context,
+                        filePath);
 
         // Check if any such Video exists in Android Video Content
         // Provider.
@@ -142,7 +139,7 @@ public class VideoDataMediator {
                     // additional meta-data (e.g., Id and ContentType)
                     // generated by the Video Service.
                     Video receivedVideo =
-                        mVideoServiceProxy.addVideo(androidVideo);
+                            mVideoServiceProxy.addVideo(androidVideo);
 
                     // Check if the Server returns any Video metadata.
                     if (receivedVideo != null) {
@@ -150,9 +147,9 @@ public class VideoDataMediator {
                         // Finally, upload the Video data to the server
                         // and get the status of the uploaded video data.
                         VideoStatus status =
-                            mVideoServiceProxy.setVideoData
-                                (receivedVideo.getId(),
-                                 new TypedFile("video/mpeg", videoFile));
+                                mVideoServiceProxy.setVideoData
+                                        (receivedVideo.getId(),
+                                                new TypedFile("video/mpeg", videoFile));
 
                         // Check if the Status of the Video or not.
                         if (status.getState() == VideoState.READY) {
@@ -165,10 +162,12 @@ public class VideoDataMediator {
                     return STATUS_UPLOAD_ERROR;
                 }
             } else
-                // Video can't be uploaded due to large video size.
+            // Video can't be uploaded due to large video size.
+            {
                 return STATUS_UPLOAD_ERROR_FILE_TOO_LARGE;
+            }
         }
-        
+
         // Error occured while uploading the video.
         return STATUS_UPLOAD_ERROR;
     }
@@ -177,14 +176,14 @@ public class VideoDataMediator {
      * Get the List of Videos from Video Service.
      *
      * @return the List of Videos from Server or null if there is
-     *         failure in getting the Videos.
+     * failure in getting the Videos.
      */
     public List<Video> getVideoList() {
         try {
             return (ArrayList<Video>)
-                        mVideoServiceProxy.getVideoList();
+                    mVideoServiceProxy.getVideoList();
         } catch (Exception e) {
-           return null; 
+            return null;
         }
     }
 }

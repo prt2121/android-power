@@ -6,14 +6,6 @@ package vandy.mooc.model.mediator.webdata;
  * VideoServiceProxy.
  */
 public class VideoStatus {
-    /**
-     * Various fields corresponding to data downloaded in Json from
-     * the Video WebService.
-     */
-    public enum VideoState {
-        READY, 
-        PROCESSING
-    }
 
     /**
      * State of the Video.
@@ -27,16 +19,25 @@ public class VideoStatus {
         super();
         this.state = state;
     }
+
+    public VideoState getState() {
+        return state;
+    }
     
     /*
      * Getters and setters to access VideoStatus.
      */
-    
-    public VideoState getState() {
-        return state;
-    }
 
     public void setState(VideoState state) {
         this.state = state;
+    }
+
+    /**
+     * Various fields corresponding to data downloaded in Json from
+     * the Video WebService.
+     */
+    public enum VideoState {
+        READY,
+        PROCESSING
     }
 }

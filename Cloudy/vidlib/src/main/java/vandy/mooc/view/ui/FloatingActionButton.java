@@ -1,8 +1,6 @@
 package vandy.mooc.view.ui;
 
 
-
-import vandy.mooc.R;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -20,70 +18,71 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+import vandy.mooc.R;
+
 /**
  * CustomView that shows how to create a Floating Action Button, as
  * per Google's Material Design principles.
  */
 public class FloatingActionButton extends View {
+
     /**
      * An interpolator where the change flings forward and overshoots
      * the last value then comes back.
      */
     final static OvershootInterpolator overshootInterpolator =
-        new OvershootInterpolator();
-    
+            new OvershootInterpolator();
+
     /**
      * An interpolator where the rate of change starts out slowly and
      * and then accelerates.
      */
     final static AccelerateInterpolator accelerateInterpolator =
-        new AccelerateInterpolator();
-    
+            new AccelerateInterpolator();
+
     /**
      * Paints used to draw the Button in Canvas.
      */
     Paint mButtonPaint;
+
     Paint mDrawablePaint;
-    
+
     /**
      * Bitmap of the icon present in Floating Action Button
      */
     Bitmap mBitmap;
+
     Drawable drawable;
+
     int color = Color.WHITE;
-    
+
     /**
-     * Boolean to indicate if the Button is hidden or not. 
+     * Boolean to indicate if the Button is hidden or not.
      */
     boolean mHidden = false;
- 
+
     /**
      * Constructor that initializes the Floating
      * Action Button from the layout.
-     * 
-     * @param context
-     * @param attrs
      */
-	public FloatingActionButton(Context context, AttributeSet attrs) {
+    public FloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        
+
         TypedArray a = context.obtainStyledAttributes(attrs,
-                          R.styleable.FabView);
+                R.styleable.FabView);
 
         this.color = a.getColor(R.styleable.FabView_fabColor, Color.WHITE);
         this.drawable = a.getDrawable(R.styleable.FabView_fabDrawable);
-        this.mBitmap = ((BitmapDrawable)drawable).getBitmap();
-        
+        this.mBitmap = ((BitmapDrawable) drawable).getBitmap();
+
         a.recycle();
-        
+
         init(color);
-        
+
     }
 
     /**
      * Sets the Color of FloatingActionButton.
-     * 
-     * @param FloatingActionButtonColor
      */
     public void setFloatingActionButtonColor(int color) {
         this.color = color;
@@ -92,8 +91,6 @@ public class FloatingActionButton extends View {
 
     /**
      * Sets the Icon of FloatingActionButton.
-     * 
-     * @param FloatingActionButtonDrawable
      */
     public void setFloatingActionButtonDrawable(Drawable drawable) {
         this.mBitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -102,10 +99,8 @@ public class FloatingActionButton extends View {
 
     /**
      * Initialize all the Resources needed before drawing.
-     * 
-     * @param FloatingActionButtonColor
      */
-	public void init(int FloatingActionButtonColor) {
+    public void init(int FloatingActionButtonColor) {
         setWillNotDraw(false);
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -113,22 +108,20 @@ public class FloatingActionButton extends View {
         mButtonPaint.setColor(FloatingActionButtonColor);
         mButtonPaint.setStyle(Paint.Style.FILL);
         mButtonPaint.setShadowLayer(10.0f,
-                                    0.0f,
-                                    3.5f,
-                                    Color.argb(100,
-                                               0,
-                                               0,
-                                               0));
+                0.0f,
+                3.5f,
+                Color.argb(100,
+                        0,
+                        0,
+                        0));
         mDrawablePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         invalidate();
-        
+
     }
 
     /**
      * Hook method called to draw the View on the Canvas.
-     * 
-     *@param canvas
      */
     @Override
     protected void onDraw(Canvas canvas) {
@@ -136,25 +129,23 @@ public class FloatingActionButton extends View {
         float cx = getWidth() / 2;
         float cy = getHeight() / 2;
         float radius = getWidth() / 2.6f;
-        float left = (float) (cx - (0.5*mBitmap.getWidth()));
+        float left = (float) (cx - (0.5 * mBitmap.getWidth()));
         float top = (getHeight() - mBitmap.getHeight()) / 2;
-        
+
         canvas.drawCircle(cx,
-                          cy,
-                          radius,
-                    mButtonPaint);
-        
+                cy,
+                radius,
+                mButtonPaint);
+
         canvas.drawBitmap(mBitmap,
-                          left,
-                          top,
-                          mDrawablePaint);
-        
+                left,
+                top,
+                mDrawablePaint);
+
     }
 
     /**
      * Hook method called when View is Touched.
-     * 
-     * @param event
      */
     @SuppressLint("ClickableViewAccessibility")
     @Override
