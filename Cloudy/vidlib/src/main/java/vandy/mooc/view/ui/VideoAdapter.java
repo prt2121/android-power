@@ -6,12 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import vandy.mooc.R;
+import vandy.mooc.model.mediator.VideoDataMediator;
 import vandy.mooc.model.mediator.webdata.Video;
 
 /**
@@ -20,10 +28,14 @@ import vandy.mooc.model.mediator.webdata.Video;
 public class VideoAdapter
         extends BaseAdapter {
 
+    public static final String TAG = VideoAdapter.class.getSimpleName();
+
     /**
      * Allows access to application-specific resources and classes.
      */
     private final Context mContext;
+
+    private boolean mNotifyChanged = false;
 
     /**
      * ArrayList to hold list of Videos that is shown in ListView.
@@ -58,7 +70,7 @@ public class VideoAdapter
      * @return A View corresponding to the data at the specified
      * position.
      */
-    public View getView(int position,
+    public View getView(final int position,
             View convertView,
             ViewGroup parent) {
         Video video = videoList.get(position);
@@ -75,10 +87,62 @@ public class VideoAdapter
         titleText.setText(video.getName());
         TextView likeNumber =
                 (TextView) convertView.findViewById(R.id.tvVideoLikeNumber);
-
-        Log.d(VideoAdapter.class.getSimpleName(), "like " + video.getLikes());
         likeNumber.setText(String.valueOf(video.getLikes()));
-
+        final ToggleButton likeButton = ((ToggleButton) convertView.findViewById(R.id.likeButton));
+        // whatever
+        if (!mNotifyChanged) {
+            likeButton.setChecked(video.getLikes() > 0);
+        }
+        likeButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Video v = videoList.get(position);
+                final VideoDataMediator mediator = new VideoDataMediator(mContext);
+                if (isChecked) {
+                    mediator.like(v.getId())
+                            .map(new Func1<Response, List<Video>>() {
+                                @Override
+                                public List<Video> call(Response response) {
+                                    return mediator.getVideoList();
+                                }
+                            })
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<List<Video>>() {
+                                @Override
+                                public void call(List<Video> videos) {
+                                    setVideos(videos);
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    Log.e(TAG, "" + throwable.getLocalizedMessage());
+                                }
+                            });
+                } else {
+                    mediator.unlike(v.getId())
+                            .map(new Func1<Response, List<Video>>() {
+                                @Override
+                                public List<Video> call(Response response) {
+                                    return mediator.getVideoList();
+                                }
+                            })
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<List<Video>>() {
+                                @Override
+                                public void call(List<Video> videos) {
+                                    setVideos(videos);
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    Log.e(TAG, "" + throwable.getLocalizedMessage());
+                                }
+                            });
+                }
+            }
+        });
         return convertView;
     }
 

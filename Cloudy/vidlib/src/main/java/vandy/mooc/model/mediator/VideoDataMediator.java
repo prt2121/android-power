@@ -12,7 +12,9 @@ import java.util.List;
 
 import retrofit.RestAdapter.LogLevel;
 import retrofit.client.OkClient;
+import retrofit.client.Response;
 import retrofit.mime.TypedFile;
+import rx.Observable;
 import vandy.mooc.model.mediator.webdata.SecuredRestBuilder;
 import vandy.mooc.model.mediator.webdata.UnsafeHttpsClient;
 import vandy.mooc.model.mediator.webdata.Video;
@@ -195,6 +197,14 @@ public class VideoDataMediator {
         }
     }
 
+    public Observable<Response> like(long id) {
+        return mVideoServiceProxy.likeVideo(id, "");
+    }
+
+    public Observable<Response> unlike(long id) {
+        return mVideoServiceProxy.unlikeVideo(id, "");
+    }
+
     /**
      * Uploads the Video meta data having the given uri.
      *
@@ -241,7 +251,7 @@ public class VideoDataMediator {
                     return STATUS_UPLOAD_ERROR;
                 }
             } else {
-            // Video can't be uploaded due to large video size.
+                // Video can't be uploaded due to large video size.
                 return STATUS_UPLOAD_ERROR_FILE_TOO_LARGE;
             }
         }
@@ -249,4 +259,6 @@ public class VideoDataMediator {
         // Error occured while uploading the video.
         return STATUS_UPLOAD_ERROR;
     }
+
+
 }

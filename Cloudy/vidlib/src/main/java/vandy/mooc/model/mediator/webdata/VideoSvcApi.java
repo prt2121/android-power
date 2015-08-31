@@ -11,6 +11,7 @@ import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Streaming;
 import retrofit.mime.TypedFile;
+import rx.Observable;
 
 /**
  * This interface defines an API for a VideoSvc. The
@@ -22,37 +23,37 @@ import retrofit.mime.TypedFile;
  */
 public interface VideoSvcApi {
 
-    public static final String DATA_PARAMETER = "data";
+    String DATA_PARAMETER = "data";
 
-    public static final String ID_PARAMETER = "id";
+    String ID_PARAMETER = "id";
 
-    public static final String TOKEN_PATH = "/oauth/token";
-
-    // The path where we expect the VideoSvc to live
-    public static final String VIDEO_SVC_PATH = "/video";
+    String TOKEN_PATH = "/oauth/token";
 
     // The path where we expect the VideoSvc to live
-    public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{" + VideoSvcApi.ID_PARAMETER + "}/data";
+    String VIDEO_SVC_PATH = "/video";
+
+    // The path where we expect the VideoSvc to live
+    String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{" + VideoSvcApi.ID_PARAMETER + "}/data";
 
 
     @GET(VIDEO_SVC_PATH)
-    public Collection<Video> getVideoList();
+    Collection<Video> getVideoList();
 
     @GET(VIDEO_SVC_PATH + "/{id}")
-    public Video getVideoById(@Path("id") long id);
+    Video getVideoById(@Path("id") long id);
 
     @POST(VIDEO_SVC_PATH)
-    public Video addVideo(@Body Video v);
+    Video addVideo(@Body Video v);
 
     @POST(VIDEO_SVC_PATH + "/{id}/rating/{rating}")
-    public AverageVideoRating rateVideo(@Path("id") long id, @Path("rating") int rating);
+    AverageVideoRating rateVideo(@Path("id") long id, @Path("rating") int rating);
 
     @GET(VIDEO_SVC_PATH + "/{id}/rating")
-    public AverageVideoRating getVideoRating(@Path("id") long id);
+    AverageVideoRating getVideoRating(@Path("id") long id);
 
     @Multipart
     @POST(VIDEO_DATA_PATH)
-    public VideoStatus setVideoData(@Path(ID_PARAMETER) long id, @Part(DATA_PARAMETER) TypedFile videoData);
+    VideoStatus setVideoData(@Path(ID_PARAMETER) long id, @Part(DATA_PARAMETER) TypedFile videoData);
 
     /**
      * This method uses Retrofit's @Streaming annotation to indicate that the
@@ -67,5 +68,11 @@ public interface VideoSvcApi {
     @Streaming
     @GET(VIDEO_DATA_PATH)
     Response getVideoData(@Path(ID_PARAMETER) long id);
+
+    @POST(VIDEO_SVC_PATH + "/{id}/like")
+    Observable<Response> likeVideo(@Path("id") long id, @Body String emptyString);
+
+    @POST(VIDEO_SVC_PATH + "/{id}/unlike")
+    Observable<Response> unlikeVideo(@Path("id") long id, @Body String emptyString);
 
 }
