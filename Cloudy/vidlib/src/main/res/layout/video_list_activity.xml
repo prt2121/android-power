@@ -17,12 +17,11 @@
 
     </ListView>
 
-    <vandy.mooc.view.ui.FloatingActionButton
+    <Button
         android:id="@+id/fabButton"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center|bottom"
-        fab:fabColor="@color/theme_primary"
-        fab:fabDrawable="@drawable/ic_video" />
+        android:text="@string/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom" />
 
 </FrameLayout>

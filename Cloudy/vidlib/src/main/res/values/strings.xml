@@ -23,6 +23,7 @@
     <string name="pref_port_title">Port </string>
     <string name="pref_port_dialog_title">Port </string>
     <string name="pref_port_default">8443</string>
+    <string name="upload">upload</string>
 
     <string-array name="pref_protocolTypes">
         <item >http</item>

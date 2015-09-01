@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 
 import vandy.mooc.R;
@@ -20,7 +21,6 @@ import vandy.mooc.common.GenericActivity;
 import vandy.mooc.common.Utils;
 import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.presenter.VideoOps;
-import vandy.mooc.view.ui.FloatingActionButton;
 import vandy.mooc.view.ui.VideoAdapter;
 
 /**
@@ -49,11 +49,7 @@ public class VideoListActivity
      */
     private UploadResultReceiver mUploadResultReceiver;
 
-    /**
-     * The Floating Action Button that will show a Dialog Fragment to
-     * upload Video when user clicks on it.
-     */
-    private FloatingActionButton mUploadVideoButton;
+    private Button mUploadVideoButton;
 
     /**
      * The ListView that contains a list of Videos available from
@@ -87,7 +83,7 @@ public class VideoListActivity
 
         // Get reference to the Floating Action Button.
         mUploadVideoButton =
-                (FloatingActionButton) findViewById(R.id.fabButton);
+                (Button) findViewById(R.id.fabButton);
 
         // Displays a chooser dialog that gives options to
         // upload video from either by Gallery or by

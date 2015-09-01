@@ -74,12 +74,18 @@ public class LoginActivity extends Activity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        requestPermission();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission();
+        }
     }
 
     private void requestPermission() {
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
             mUsernameView.setEnabled(false);
             mPasswordView.setEnabled(false);
             mMEmailSignInButton.setEnabled(false);
@@ -88,7 +94,11 @@ public class LoginActivity extends Activity {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Toast.makeText(this, "Gimme the permission", Toast.LENGTH_LONG).show();
             }
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            requestPermissions(
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA},
+                    PERMISSION_REQUEST_CODE);
         } else {
             mUsernameView.setEnabled(true);
             mPasswordView.setEnabled(true);

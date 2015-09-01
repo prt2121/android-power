@@ -93,8 +93,8 @@ public class UploadVideoService
 //        finishNotification(mVideoMediator.uploadVideo(getApplicationContext(),
 //                intent.getData()));
 
-        finishNotification(mVideoMediator.uploadVideoMetaData(getApplicationContext(),
-                intent.getData()));
+        finishNotification(
+                mVideoMediator.uploadVideoMetaData(getApplicationContext(), intent.getData()));
 
         // Send the Broadcast to VideoListActivity that the Video
         // Upload is completed.

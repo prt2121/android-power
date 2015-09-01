@@ -217,6 +217,17 @@ public class VideoDataMediator {
         String filePath =
                 VideoMediaStoreUtils.getPath(context, videoUri);
 
+        if (filePath == null) {
+            filePath = VideoMediaStoreUtils.getRealPathFromURI(context, videoUri);
+        }
+
+        if (filePath == null) {
+            filePath = videoUri.getPath();
+        }
+
+        Log.d(TAG, "filePath " + filePath);
+        Log.d(TAG, "getPath " + videoUri.getPath());
+
         // Get the Video from Android Video Content Provider having
         // the given filePath.
         Video androidVideo =
