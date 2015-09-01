@@ -1,10 +1,12 @@
 package com.prt2121.cloudy;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import vandy.mooc.view.VideoListActivity;
 
@@ -35,6 +38,10 @@ public class LoginActivity extends Activity {
     private View mProgressView;
 
     private View mLoginFormView;
+
+    public static final int PERMISSION_REQUEST_CODE = 777;
+
+    private Button mMEmailSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +63,8 @@ public class LoginActivity extends Activity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        mMEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mMEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -66,6 +73,46 @@ public class LoginActivity extends Activity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        requestPermission();
+    }
+
+    private void requestPermission() {
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            mUsernameView.setEnabled(false);
+            mPasswordView.setEnabled(false);
+            mMEmailSignInButton.setEnabled(false);
+
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "Gimme the permission", Toast.LENGTH_LONG).show();
+            }
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        } else {
+            mUsernameView.setEnabled(true);
+            mPasswordView.setEnabled(true);
+            mMEmailSignInButton.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mUsernameView.setEnabled(true);
+                    mPasswordView.setEnabled(true);
+                    mMEmailSignInButton.setEnabled(true);
+                } else {
+                    mUsernameView.setEnabled(false);
+                    mPasswordView.setEnabled(false);
+                    mMEmailSignInButton.setEnabled(false);
+                    Toast.makeText(this, "Please enable the permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     /**
