@@ -16,7 +16,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import de.greenrobot.event.EventBus;
 import vandy.mooc.R;
+import vandy.mooc.User;
 import vandy.mooc.common.GenericActivity;
 import vandy.mooc.common.Utils;
 import vandy.mooc.model.services.UploadVideoService;
@@ -69,6 +71,8 @@ public class VideoListActivity
         // Initialize the default layout.
         setContentView(R.layout.video_list_activity);
 
+        EventBus.getDefault().registerSticky(this);
+
         // Receiver for the notification.
         mUploadResultReceiver =
                 new UploadResultReceiver();
@@ -102,6 +106,17 @@ public class VideoListActivity
                 this);
     }
 
+    private String username;
+
+    private String password;
+
+    public void onEvent(User user) {
+        username = user.username;
+        password = user.password;
+        EventBus.getDefault().removeStickyEvent(user);
+    }
+
+    ;
 
     /**
      * Displays a chooser dialog that gives options
@@ -154,7 +169,7 @@ public class VideoListActivity
             Utils.showToast(this, "Uploading video");
 
             // Upload the Video.
-            getOps().uploadVideo(data.getData());
+            getOps().uploadVideo(data.getData(), username, password);
 
             // TODO
 
@@ -208,6 +223,12 @@ public class VideoListActivity
         // Unregister BroadcastReceiver.
         LocalBroadcastManager.getInstance(this)
                 .unregisterReceiver(mUploadResultReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     /**

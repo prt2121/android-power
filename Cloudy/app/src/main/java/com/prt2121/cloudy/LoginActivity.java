@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import de.greenrobot.event.EventBus;
+import vandy.mooc.User;
 import vandy.mooc.view.VideoListActivity;
 
 public class LoginActivity extends Activity {
@@ -140,14 +142,16 @@ public class LoginActivity extends Activity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mUsernameView.getText().toString();
+        String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
+
+        EventBus.getDefault().postSticky(new User(username, password));
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        // Check for a valid username address.
+        if (TextUtils.isEmpty(username)) {
             mUsernameView.setError(getString(R.string.error_field_required));
             focusView = mUsernameView;
             cancel = true;
@@ -161,7 +165,7 @@ public class LoginActivity extends Activity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(username, password);
             mAuthTask.execute((Void) null);
         }
     }

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 
 import vandy.mooc.model.mediator.VideoDataMediator;
 
@@ -73,6 +74,19 @@ public class UploadVideoService
     }
 
     /**
+     * Factory method that makes the explicit intent another Activity
+     * uses to call this Service.
+     */
+    public static Intent makeIntent(Context context,
+            Uri videoUri, String username, String password) {
+        Intent intent = new Intent(context,
+                UploadVideoService.class).setData(videoUri);
+        intent.putExtra("USERNAME", username);
+        intent.putExtra("PASSWORD", password);
+        return intent;
+    }
+
+    /**
      * Hook method that is invoked on the worker thread with a request
      * to process. Only one Intent is processed at a time, but the
      * processing happens on a worker thread that runs independently
@@ -84,17 +98,25 @@ public class UploadVideoService
         // upload.
         startNotification();
 
-        // Create VideoDataMediator that will mediate the communication
-        // between Server and Android Storage.
-        mVideoMediator =
-                new VideoDataMediator(getApplicationContext());
-
         // Check if Video Upload is successful.
 //        finishNotification(mVideoMediator.uploadVideo(getApplicationContext(),
 //                intent.getData()));
 
+        String username = intent.getStringExtra("USERNAME");
+        String password = intent.getStringExtra("PASSWORD");
+
+        if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            // Create VideoDataMediator that will mediate the communication
+            // between Server and Android Storage.
+            mVideoMediator =
+                    new VideoDataMediator(getApplicationContext());
+        } else {
+            mVideoMediator = new VideoDataMediator(getApplicationContext(), username, password);
+        }
+
         finishNotification(
-                mVideoMediator.uploadVideoMetaData(getApplicationContext(), intent.getData()));
+                mVideoMediator.uploadVideoMetaData(
+                        getApplicationContext(), intent.getData()));
 
         // Send the Broadcast to VideoListActivity that the Video
         // Upload is completed.

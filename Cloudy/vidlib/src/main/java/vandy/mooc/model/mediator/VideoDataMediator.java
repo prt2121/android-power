@@ -113,6 +113,50 @@ public class VideoDataMediator {
 
     }
 
+    /**
+     * Constructor that initializes the VideoDataMediator.
+     */
+    public VideoDataMediator(Context context, String username, String password) {
+
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        String serverProtocol = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_PROTOCOL,
+                        "https");
+        String serverIp = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_IP_ADDRESS,
+                        "10.0.2.2");
+        String serverPort = prefs
+                .getString(SettingsActivity.KEY_PREFERENCE_PORT,
+                        "8443");
+
+        String serverUrl = serverProtocol
+                + "://"
+                + serverIp
+                + ":"
+                + serverPort;
+
+//        String serverUrl = TEST_URL;
+
+        Log.d(TAG, "serverUrl " + serverUrl);
+        Log.d(TAG, "userName " + username);
+        Log.d(TAG, "password " + password);
+
+        // Initialize the VideoServiceProxy.
+        mVideoServiceProxy =
+                new SecuredRestBuilder()
+                        .setLoginEndpoint(serverUrl + VideoSvcApi.TOKEN_PATH)
+                        .setEndpoint(serverUrl)
+                        .setUsername(username)
+                        .setPassword(password)
+                        .setClientId(Constants.CLIENT_ID)
+                        .setClient(new OkClient(UnsafeHttpsClient.getUnsafeOkHttpClient()))
+                        .setLogLevel(LogLevel.FULL)
+                        .build()
+                        .create(VideoSvcApi.class);
+    }
+
 
     /**
      * Uploads the Video having the given uri.

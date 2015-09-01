@@ -119,6 +119,17 @@ public class VideoOps
     }
 
     /**
+     * Start a service that Uploads the Video having given Id.
+     */
+    public void uploadVideo(Uri videoUri, String username, String password) {
+        // Sends an Intent command to the UploadVideoService.
+        mVideoView.get().getApplicationContext().startService
+                (UploadVideoService.makeIntent
+                        (mVideoView.get().getApplicationContext(),
+                                videoUri, username, password));
+    }
+
+    /**
      * Gets the VideoList from Server by executing the AsyncTask to
      * expand the acronym without blocking the caller.
      */
