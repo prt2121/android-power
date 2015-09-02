@@ -82,8 +82,10 @@ public class LoginActivity extends Activity {
     }
 
     private void requestPermission() {
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (checkSelfPermission(Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(Manifest.permission.CAMERA)
@@ -99,6 +101,9 @@ public class LoginActivity extends Activity {
             requestPermissions(
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.WRITE_CONTACTS,
+                            Manifest.permission.MEDIA_CONTENT_CONTROL,
                             Manifest.permission.CAMERA},
                     PERMISSION_REQUEST_CODE);
         } else {

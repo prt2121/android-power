@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.File;
 
@@ -41,7 +42,13 @@ public class VideoMediaStoreUtils {
         final MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
         //Set the dataSource to the video file path.
-        retriever.setDataSource(filePath);
+        try {
+            retriever.setDataSource(filePath);
+        } catch(Exception ex) {
+            String path = "/sdcard/DCIM/Camera" + filePath.substring(filePath.lastIndexOf("/"));
+            Log.d(VideoMediaStoreUtils.class.getSimpleName(), path);
+            retriever.setDataSource(path);
+        }
 
         // Get the video video file name.
         final String title =
