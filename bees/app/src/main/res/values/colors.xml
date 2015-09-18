@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    http://www.color-hex.com/color-palette/5050
+    ef5350 64b5f6 ffee58 66bb6a -->
+    <color name="primary_dark">#D32F2F</color>
+    <color name="primary">#EF5350</color>
+    <color name="accent">#64B5F6</color>
+</resources>
