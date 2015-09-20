@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Open Issues</string>
+    <string name="loading">Loading…</string>
+    <string name="login_activity_authenticating">Logging in…</string>
+    <string name="loading_user">Loading user profile…</string>
+    <string name="github_oauth_scheme">prt2121</string>
+    <string name="account_type" translatable="false">com.funsociety</string>
+</resources>
