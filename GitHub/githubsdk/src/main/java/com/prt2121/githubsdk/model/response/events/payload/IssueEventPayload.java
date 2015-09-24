@@ -15,7 +15,7 @@ public class IssueEventPayload extends ActionEventPayload {
 4 = {LinkedTreeMap$Node@4746} "html_url" -> "https://github.com/afollestad/material-dialogs/issues/542"
 5 = {LinkedTreeMap$Node@4747} "id" -> "8.1014468E7"
 6 = {LinkedTreeMap$Node@4748} "number" -> "542.0"
-7 = {LinkedTreeMap$Node@4749} "title" -> "Unselected radio buttons in MaterialListPreference, EditText in MaterialEditTextPreference is invisible with non-AppCompat theme"
+7 = {LinkedTreeMap$Node@4749} "title" -> "Unselected radio buttons in MaterialListPreference, EditText in MaterialEditTextPreference is invisible of non-AppCompat theme"
 8 = {LinkedTreeMap$Node@4750} "user" -> " size = 17"
 9 = {LinkedTreeMap$Node@4751} "labels" -> " size = 1"
 10 = {LinkedTreeMap$Node@4752} "state" -> "closed"

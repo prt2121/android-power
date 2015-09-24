@@ -9,14 +9,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.prt2121.githubsdk.model.response.Repo;
-import com.prt2121.githubsdk.service.repos.UserReposClient;
+import com.prt2121.githubsdk.service.repos.UserRepos;
 import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
 
   public static String TAG = MainActivity.class.getSimpleName();
 
-  @Inject UserReposClient client;
+  @Inject UserRepos userRepos;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
             .setAction("Action", null)
             .show());
 
-    client.execute().subscribe(rs -> {
+    userRepos.of("prt2121").sortBy("update").execute().subscribe(rs -> {
       for (Repo repo : rs) {
         Log.d(TAG, "" + repo.toString());
       }
