@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import com.prt2121.githubsdk.model.response.Repo;
 import com.prt2121.githubsdk.service.repos.ReposService;
 import java.util.List;
@@ -17,10 +16,11 @@ import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+
+  public static String TAG = MainActivity.class.getSimpleName();
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -29,13 +29,10 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+    fab.setOnClickListener(
+        view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             .setAction("Action", null)
-            .show();
-      }
-    });
+            .show());
 
     Retrofit retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -43,37 +40,26 @@ public class MainActivity extends AppCompatActivity {
         .build();
 
     ReposService service = retrofit.create(ReposService.class);
-    service.repos("octocat")
-        .compose(this.<List<Repo>>applySchedulers())
-        .subscribe(new Action1<List<Repo>>() {
-          @Override public void call(List<Repo> repos) {
-            Log.d(MainActivity.class.getSimpleName(), "" + repos.size());
-          }
-        }, new Action1<Throwable>() {
-          @Override public void call(Throwable throwable) {
-            Log.e(MainActivity.class.getSimpleName(), "" + throwable.getLocalizedMessage());
-          }
-        });
+    service.repos("prt2121").compose(this.<List<Repo>>applySchedulers()).subscribe(repos -> {
+      for (Repo repo : repos) {
+        Log.d(TAG, "" + repo.toString());
+      }
+    }, throwable -> {
+      Log.e(TAG, "" + throwable.getLocalizedMessage());
+    });
   }
 
   <T> Observable.Transformer<T, T> applySchedulers() {
-    return new Observable.Transformer<T, T>() {
-      @Override public Observable<T> call(Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-      }
-    };
+    return observable -> observable.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
     return true;
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
     //noinspection SimplifiableIfStatement
