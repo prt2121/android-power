@@ -9,21 +9,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.prt2121.githubsdk.model.response.Repo;
-import com.prt2121.githubsdk.service.repos.ReposService;
-import java.util.List;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import com.prt2121.githubsdk.service.repos.UserReposClient;
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
 
   public static String TAG = MainActivity.class.getSimpleName();
 
+  @Inject UserReposClient client;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ((GitHubApp) getApplication()).getAppComponent().inject(this);
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -34,24 +31,13 @@ public class MainActivity extends AppCompatActivity {
             .setAction("Action", null)
             .show());
 
-    Retrofit retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        .baseUrl("https://api.github.com")
-        .build();
-
-    ReposService service = retrofit.create(ReposService.class);
-    service.repos("prt2121").compose(this.<List<Repo>>applySchedulers()).subscribe(repos -> {
-      for (Repo repo : repos) {
+    client.execute().subscribe(rs -> {
+      for (Repo repo : rs) {
         Log.d(TAG, "" + repo.toString());
       }
     }, throwable -> {
       Log.e(TAG, "" + throwable.getLocalizedMessage());
     });
-  }
-
-  <T> Observable.Transformer<T, T> applySchedulers() {
-    return observable -> observable.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
