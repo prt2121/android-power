@@ -21,8 +21,8 @@ public abstract class BaseClient<T> {
 
   private static final String BASE_URL = "https://api.github.com";
   protected Context context;
-  private CredentialStorage storage;
   protected String token;
+  private CredentialStorage storage;
 
   public BaseClient(Context context) {
     this(context, null);

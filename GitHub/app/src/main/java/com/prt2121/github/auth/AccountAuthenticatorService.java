@@ -77,7 +77,6 @@ public class AccountAuthenticatorService extends Service {
       intent.putExtra(WebLoginActivity.ARG_ACCOUNT_TYPE, account.type);
       intent.putExtra(WebLoginActivity.ARG_AUTH_TYPE, authTokenType);
       reply.putParcelable(AccountManager.KEY_INTENT, intent);
-
       return reply;
     }
 

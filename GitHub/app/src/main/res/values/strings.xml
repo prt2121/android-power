@@ -7,5 +7,5 @@
   <string name="loading_user">Loading user profile…</string>
   <string name="github_oauth_scheme">prt2121</string>
   <string name="account_type"
-      translatable="false">com.funsociety</string>
+      translatable="false">com.prt2121.github</string>
 </resources>

@@ -32,12 +32,13 @@
     <activity
         android:name="com.prt2121.github.auth.WebLoginActivity"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme.NoActionBar" >
+        android:theme="@style/AppTheme.NoActionBar"
+        >
 
       <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.VIEW"/>
 
-        <data android:scheme="@string/github_oauth_scheme" />
+        <data android:scheme="@string/github_oauth_scheme"/>
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -57,6 +58,22 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>-->
     </activity>
+
+    <service
+        android:name="auth.AccountAuthenticatorService"
+        android:exported="false"
+        android:process=":auth"
+        >
+      <intent-filter>
+        <action android:name="android.accounts.AccountAuthenticator"/>
+      </intent-filter>
+
+      <meta-data
+          android:name="android.accounts.AccountAuthenticator"
+          android:resource="@xml/authenticator"
+          />
+    </service>
+
   </application>
 
 </manifest>

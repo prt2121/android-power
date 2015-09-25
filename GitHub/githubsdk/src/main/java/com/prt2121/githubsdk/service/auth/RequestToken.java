@@ -17,9 +17,8 @@ import rx.Observable;
  */
 public class RequestToken extends BaseClient<Token> {
 
-  private String code;
-
   public static final String AUTH_URL = "https://github.com";
+  private String code;
 
   public RequestToken(Context context, String code) {
     super(context);

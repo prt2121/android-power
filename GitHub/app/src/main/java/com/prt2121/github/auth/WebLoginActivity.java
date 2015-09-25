@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.prt2121.github.MainActivity;
 import com.prt2121.github.R;
 import com.prt2121.githubsdk.model.response.Token;
 import com.prt2121.githubsdk.model.response.User;
@@ -45,16 +46,19 @@ public class WebLoginActivity extends AppCompatActivity {
   private AccountManager accountManager;
 
   private AlertDialog progressDialog;
+  private String accountType;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Timber.d("uid " + getApplicationInfo().uid);
     authenticatorResponse =
         getIntent().getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
     if (authenticatorResponse != null) {
       authenticatorResponse.onRequestContinued();
     }
     accountManager = AccountManager.get(this);
-    Account[] accounts = accountManager.getAccountsByType(getString(R.string.account_type));
+    accountType = getString(R.string.account_type);
+    Account[] accounts = accountManager.getAccountsByType(accountType);
     if (accounts != null && accounts.length > 0) {
       openMain();
     }
@@ -131,13 +135,13 @@ public class WebLoginActivity extends AppCompatActivity {
   private void setupAccount(Pair<User, Token> pair) {
     User user = pair.first;
     Token token = pair.second;
-    Account account = new Account(user.login, getString(R.string.account_type));
+    Account account = new Account(user.login, accountType);
     Bundle userData =
         AccountsHelper.buildBundle(account.name, user.email, user.avatar_url, token.scope);
     final String tokenString = token.access_token;
     userData.putString(AccountManager.KEY_AUTHTOKEN, tokenString);
     accountManager.addAccountExplicitly(account, null, userData);
-    accountManager.setAuthToken(account, getString(R.string.account_type), tokenString);
+    accountManager.setAuthToken(account, accountType, tokenString);
 
     Bundle result = new Bundle();
     result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
@@ -182,9 +186,8 @@ public class WebLoginActivity extends AppCompatActivity {
     if (progressDialog != null) {
       progressDialog.dismiss();
     }
-    // TODO
-    //        Intent intent = new Intent(this, MainActivity.class);
-    //        startActivity(intent);
-    //        finish();
+    Intent intent = new Intent(this, MainActivity.class);
+    startActivity(intent);
+    finish();
   }
 }
