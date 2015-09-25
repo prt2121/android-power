@@ -22,7 +22,7 @@ public abstract class BaseClient<T> {
   private static final String BASE_URL = "https://api.github.com";
   protected Context context;
   private CredentialStorage storage;
-  private String token;
+  protected String token;
 
   public BaseClient(Context context) {
     this(context, null);
@@ -31,7 +31,7 @@ public abstract class BaseClient<T> {
   public BaseClient(Context context, String token) {
     this.context = context.getApplicationContext();
     this.token = token;
-    storage.storeToken(token);
+    storage = new CredentialStorage(context, token);
   }
 
   protected Retrofit getRetrofit() {
@@ -40,7 +40,9 @@ public abstract class BaseClient<T> {
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .baseUrl(BASE_URL);
 
-    if (!TextUtils.isEmpty(storage.token())) {
+    if (getClient() != null) {
+      builder.client(getClient());
+    } else if (!TextUtils.isEmpty(storage.token())) {
       OkHttpClient client = new OkHttpClient();
       client.interceptors().add(chain -> {
         Request request = chain.request();
@@ -53,10 +55,6 @@ public abstract class BaseClient<T> {
 
     if (customConverter() != null) {
       builder.addConverterFactory(customConverter());
-    }
-
-    if (getClient() != null) {
-      builder.client(getClient());
     }
 
     return builder.build();
