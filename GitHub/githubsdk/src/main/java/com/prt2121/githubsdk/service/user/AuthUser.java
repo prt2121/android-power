@@ -1,4 +1,4 @@
-package com.prt2121.githubsdk.service.users;
+package com.prt2121.githubsdk.service.user;
 
 import android.content.Context;
 import com.prt2121.githubsdk.client.BaseClient;
@@ -15,7 +15,7 @@ public class AuthUser extends BaseClient<User> {
   }
 
   @Override public Observable<User> execute() {
-    UsersService users = getRetrofit().create(UsersService.class);
+    UserService users = getRetrofit().create(UserService.class);
     return users.me();
   }
 }

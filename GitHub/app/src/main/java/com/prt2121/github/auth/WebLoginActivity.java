@@ -21,7 +21,7 @@ import com.prt2121.githubsdk.model.response.Token;
 import com.prt2121.githubsdk.model.response.User;
 import com.prt2121.githubsdk.service.auth.AccountsHelper;
 import com.prt2121.githubsdk.service.auth.RequestToken;
-import com.prt2121.githubsdk.service.users.AuthUser;
+import com.prt2121.githubsdk.service.user.AuthUser;
 import com.squareup.okhttp.HttpUrl;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
