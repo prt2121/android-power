@@ -81,11 +81,15 @@ public class WebLoginActivity extends AppCompatActivity {
           (LightProgressDialog) LightProgressDialog.create(WebLoginActivity.this, R.string.loading);
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        //dialog.show();
+        if (!isFinishing()) {
+          dialog.show();
+        }
       }
 
       @Override public void onPageFinished(WebView view, String url) {
-        //dialog.dismiss();
+        if ((dialog != null) && dialog.isShowing()) {
+          dialog.dismiss();
+        }
       }
 
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -108,12 +112,13 @@ public class WebLoginActivity extends AppCompatActivity {
 
   private void onUserLoggedIn(Uri uri) {
     if (uri != null && uri.getScheme().equals(getString(R.string.github_oauth_scheme))) {
-      //openLoadingDialog();
+      openLoadingDialog();
       String code = uri.getQueryParameter("code");
       if (code != null) {
         requestToken.setCode(code);
-        requestToken.token().map(this::getTokenOrThrowException)
-            //.doOnNext(t -> showLoadingUser())
+        requestToken.token()
+            .map(this::getTokenOrThrowException)
+            .doOnNext(t -> showLoadingUser())
             .flatMap(this::getUserAndToken)
             .doOnNext(t -> Timber.d(t.first.name))
             .compose(RxUtils.applySchedulers())
@@ -162,15 +167,19 @@ public class WebLoginActivity extends AppCompatActivity {
         .zipWith(Observable.just(token), (Func2<User, Token, Pair<User, Token>>) Pair::new);
   }
 
-  //private void showLoadingUser() {
-  //  WebLoginActivity.this.runOnUiThread(
-  //      () -> progressDialog.setMessage(getString(R.string.loading_user)));
-  //}
-  //
-  //private void openLoadingDialog() {
-  //  progressDialog = LightProgressDialog.create(this, R.string.login_activity_authenticating);
-  //  progressDialog.show();
-  //}
+  private void showLoadingUser() {
+    if (progressDialog != null) {
+      WebLoginActivity.this.runOnUiThread(
+          () -> progressDialog.setMessage(getString(R.string.loading_user)));
+    }
+  }
+
+  private void openLoadingDialog() {
+    if (!isFinishing()) {
+      progressDialog = LightProgressDialog.create(this, R.string.login_activity_authenticating);
+      progressDialog.show();
+    }
+  }
 
   private void openMain() {
     if (progressDialog != null) {
