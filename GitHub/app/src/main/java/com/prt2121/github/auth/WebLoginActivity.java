@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.prt2121.github.GitHubApp;
 import com.prt2121.github.MainActivity;
 import com.prt2121.github.R;
 import com.prt2121.github.RxUtils;
@@ -23,6 +24,7 @@ import com.prt2121.githubsdk.service.auth.AccountsHelper;
 import com.prt2121.githubsdk.service.auth.RequestToken;
 import com.prt2121.githubsdk.service.user.AuthUser;
 import com.squareup.okhttp.HttpUrl;
+import javax.inject.Inject;
 import rx.Observable;
 import rx.functions.Func2;
 import timber.log.Timber;
@@ -39,15 +41,18 @@ public class WebLoginActivity extends AppCompatActivity {
 
   private AccountAuthenticatorResponse authenticatorResponse = null;
 
-  private RequestToken requestToken;
+  @Inject RequestToken requestToken;
 
   private AccountManager accountManager;
 
   private AlertDialog progressDialog;
   private String accountType;
 
+  @Inject AuthUser authUser;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ((GitHubApp) getApplication()).getAppComponent().inject(this);
     Timber.d("uid " + getApplicationInfo().uid);
     authenticatorResponse =
         getIntent().getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
@@ -110,8 +115,8 @@ public class WebLoginActivity extends AppCompatActivity {
     if (uri != null && uri.getScheme().equals(getString(R.string.github_oauth_scheme))) {
       //openLoadingDialog();
       String code = uri.getQueryParameter("code");
-      if (requestToken == null && code != null) {
-        requestToken = new RequestToken(WebLoginActivity.this, code);
+      if (code != null) {
+        requestToken.setCode(code);
         requestToken.token().map(this::getTokenOrThrowException)
             //.doOnNext(t -> showLoadingUser())
             .flatMap(this::getUserAndToken)
@@ -157,7 +162,7 @@ public class WebLoginActivity extends AppCompatActivity {
   }
 
   @NonNull private Observable<? extends Pair<User, Token>> getUserAndToken(Token token) {
-    AuthUser authUser = new AuthUser(WebLoginActivity.this, token.access_token);
+    authUser.setAndStoreToken(token.access_token);
     return authUser.me()
         .zipWith(Observable.just(token), (Func2<User, Token, Pair<User, Token>>) Pair::new);
   }

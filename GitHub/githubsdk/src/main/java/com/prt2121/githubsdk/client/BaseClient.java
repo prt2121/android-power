@@ -1,9 +1,9 @@
 package com.prt2121.githubsdk.client;
 
-import android.content.Context;
 import android.text.TextUtils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import javax.inject.Inject;
 import retrofit.Converter;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -17,20 +17,10 @@ import static java.lang.String.format;
 public abstract class BaseClient {
 
   private static final String BASE_URL = "https://api.github.com";
-  protected Context context;
   protected String token;
-  CredentialStorage storage;
+  @Inject public CredentialStorage storage;
 
-  public BaseClient(Context context) {
-    this.context = context.getApplicationContext();
-    storage = new CredentialStorage(context);
-  }
-
-  public BaseClient(Context context, String token) {
-    this.context = context.getApplicationContext();
-    this.token = token;
-    storage = new CredentialStorage(context);
-    storage.storeToken(token);
+  public BaseClient() {
   }
 
   protected Retrofit getRetrofit() {

@@ -3,6 +3,7 @@ package com.prt2121.githubsdk.service.user;
 import android.content.Context;
 import com.prt2121.githubsdk.client.BaseClient;
 import com.prt2121.githubsdk.model.response.User;
+import javax.inject.Inject;
 import rx.Observable;
 
 /**
@@ -10,8 +11,15 @@ import rx.Observable;
  */
 public class AuthUser extends BaseClient {
 
-  public AuthUser(Context context, String token) {
-    super(context, token);
+  Context context;
+
+  @Inject public AuthUser(Context context) {
+    this.context = context;
+  }
+
+  public void setAndStoreToken(String token) {
+    this.token = token;
+    storage.storeToken(token);
   }
 
   public Observable<User> me() {

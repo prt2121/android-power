@@ -7,6 +7,8 @@ import com.prt2121.githubsdk.model.request.RequestTokenDTO;
 import com.prt2121.githubsdk.model.response.Token;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
@@ -15,13 +17,18 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/24/15.
  */
+@Singleton
 public class RequestToken extends BaseClient {
 
   public static final String AUTH_URL = "https://github.com";
   private String code;
+  Context context;
 
-  public RequestToken(Context context, String code) {
-    super(context);
+  @Inject public RequestToken(Context context) {
+    this.context = context;
+  }
+
+  public void setCode(String code) {
     this.code = code;
   }
 

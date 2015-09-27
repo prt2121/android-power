@@ -13,9 +13,10 @@ import rx.Observable;
 public class Event extends BaseClient {
 
   private String username;
+  Context context;
 
   @Inject public Event(Context context) {
-    super(context);
+    this.context = context;
   }
 
   public Event forUser(String username) {

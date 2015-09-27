@@ -16,9 +16,10 @@ public class UserRepos extends BaseClient {
   private static final String DEFAULT_SORT = "update";
   private String username;
   private String sort;
+  Context context;
 
   @Inject public UserRepos(Context context) {
-    super(context);
+    this.context = context;
   }
 
   public UserRepos of(String username) {
