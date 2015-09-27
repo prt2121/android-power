@@ -12,8 +12,8 @@ import rx.Observable;
  */
 public class Event extends BaseClient {
 
-  private String username;
   Context context;
+  private String username;
 
   @Inject public Event(Context context) {
     this.context = context;

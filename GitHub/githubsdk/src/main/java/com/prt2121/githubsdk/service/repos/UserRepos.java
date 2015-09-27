@@ -14,9 +14,9 @@ import rx.Observable;
 public class UserRepos extends BaseClient {
 
   private static final String DEFAULT_SORT = "update";
+  Context context;
   private String username;
   private String sort;
-  Context context;
 
   @Inject public UserRepos(Context context) {
     this.context = context;

@@ -38,17 +38,12 @@ public class WebLoginActivity extends AppCompatActivity {
   public static final String ADDING_FROM_ACCOUNTS = "ADDING_FROM_ACCOUNTS";
 
   public static final String OAUTH_HOST = "www.github.com";
-
-  private AccountAuthenticatorResponse authenticatorResponse = null;
-
   @Inject RequestToken requestToken;
-
+  @Inject AuthUser authUser;
+  private AccountAuthenticatorResponse authenticatorResponse = null;
   private AccountManager accountManager;
-
   private AlertDialog progressDialog;
   private String accountType;
-
-  @Inject AuthUser authUser;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

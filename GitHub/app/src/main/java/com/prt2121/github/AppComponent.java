@@ -9,5 +9,6 @@ import javax.inject.Singleton;
  */
 @Singleton @Component(modules = AppModule.class) public interface AppComponent {
   void inject(MainActivity activity);
+
   void inject(WebLoginActivity activity);
 }

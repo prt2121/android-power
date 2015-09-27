@@ -17,8 +17,8 @@ import static java.lang.String.format;
 public abstract class BaseClient {
 
   private static final String BASE_URL = "https://api.github.com";
-  protected String token;
   @Inject public CredentialStorage storage;
+  protected String token;
 
   public BaseClient() {
   }

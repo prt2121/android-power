@@ -17,12 +17,11 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/24/15.
  */
-@Singleton
-public class RequestToken extends BaseClient {
+@Singleton public class RequestToken extends BaseClient {
 
   public static final String AUTH_URL = "https://github.com";
-  private String code;
   Context context;
+  private String code;
 
   @Inject public RequestToken(Context context) {
     this.context = context;
