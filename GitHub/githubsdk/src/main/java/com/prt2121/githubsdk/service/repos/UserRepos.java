@@ -11,7 +11,7 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/23/15.
  */
-public class UserRepos extends BaseClient<List<Repo>> {
+public class UserRepos extends BaseClient {
 
   private static final String DEFAULT_SORT = "update";
   private String username;
@@ -31,7 +31,7 @@ public class UserRepos extends BaseClient<List<Repo>> {
     return this;
   }
 
-  public Observable<List<Repo>> execute() {
+  public Observable<List<Repo>> repos() {
     ReposService service = getRetrofit().create(ReposService.class);
     if (TextUtils.isEmpty(username) && TextUtils.isEmpty(sort)) {
       return service.repos(DEFAULT_SORT).compose(this.<List<Repo>>applySchedulers());

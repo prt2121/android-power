@@ -10,7 +10,7 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/26/15.
  */
-public class Event extends BaseClient<List<GitHubEvent>> {
+public class Event extends BaseClient {
 
   private String username;
 
@@ -23,7 +23,7 @@ public class Event extends BaseClient<List<GitHubEvent>> {
     return this;
   }
 
-  @Override public Observable<List<GitHubEvent>> execute() {
+  public Observable<List<GitHubEvent>> receivedEvents() {
     EventService service = getRetrofit().create(EventService.class);
     return service.receivedEvents(username);
   }

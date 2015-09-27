@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -114,7 +113,7 @@ public class WebLoginActivity extends AppCompatActivity {
       String code = uri.getQueryParameter("code");
       if (requestToken == null && code != null) {
         requestToken = new RequestToken(WebLoginActivity.this, code);
-        requestToken.execute().map(this::getTokenOrThrowException)
+        requestToken.token().map(this::getTokenOrThrowException)
             //.doOnNext(t -> showLoadingUser())
             .flatMap(this::getUserAndToken)
             .doOnNext(t -> Timber.d(t.first.name))
@@ -160,7 +159,7 @@ public class WebLoginActivity extends AppCompatActivity {
 
   @NonNull private Observable<? extends Pair<User, Token>> getUserAndToken(Token token) {
     AuthUser authUser = new AuthUser(WebLoginActivity.this, token.access_token);
-    return authUser.execute()
+    return authUser.me()
         .zipWith(Observable.just(token), (Func2<User, Token, Pair<User, Token>>) Pair::new);
   }
 

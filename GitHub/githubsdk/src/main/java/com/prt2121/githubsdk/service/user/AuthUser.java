@@ -8,13 +8,13 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/24/15.
  */
-public class AuthUser extends BaseClient<User> {
+public class AuthUser extends BaseClient {
 
   public AuthUser(Context context, String token) {
     super(context, token);
   }
 
-  @Override public Observable<User> execute() {
+  public Observable<User> me() {
     UserService users = getRetrofit().create(UserService.class);
     return users.me();
   }

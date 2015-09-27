@@ -15,7 +15,7 @@ import rx.Observable;
 /**
  * Created by pt2121 on 9/24/15.
  */
-public class RequestToken extends BaseClient<Token> {
+public class RequestToken extends BaseClient {
 
   public static final String AUTH_URL = "https://github.com";
   private String code;
@@ -25,7 +25,7 @@ public class RequestToken extends BaseClient<Token> {
     this.code = code;
   }
 
-  @Override public Observable<Token> execute() {
+  public Observable<Token> token() {
     Retrofit.Builder builder =
         new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

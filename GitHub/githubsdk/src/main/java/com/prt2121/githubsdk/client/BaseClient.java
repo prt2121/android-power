@@ -17,7 +17,7 @@ import static java.lang.String.format;
 /**
  * Created by pt2121 on 9/23/15.
  */
-public abstract class BaseClient<T> {
+public abstract class BaseClient {
 
   private static final String BASE_URL = "https://api.github.com";
   protected Context context;
@@ -71,9 +71,7 @@ public abstract class BaseClient<T> {
     return null;
   }
 
-  protected abstract Observable<T> execute();
-
-  protected <T1> Observable.Transformer<T1, T1> applySchedulers() {
+  protected <T> Observable.Transformer<T, T> applySchedulers() {
     return observable -> observable.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread());
   }

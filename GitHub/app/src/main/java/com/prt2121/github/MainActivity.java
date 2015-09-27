@@ -19,8 +19,6 @@ import timber.log.Timber;
 
 public class MainActivity extends RxAppCompatActivity {
 
-  public static String TAG = MainActivity.class.getSimpleName();
-
   @Inject UserRepos userRepos;
   @Inject Event event;
 
@@ -58,7 +56,7 @@ public class MainActivity extends RxAppCompatActivity {
   private void retrieveRepos() {
     userRepos.of("prt2121")
         .sortBy("update")
-        .execute()
+        .repos()
         .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
         .compose(applySchedulers())
         .subscribe(rs -> {
