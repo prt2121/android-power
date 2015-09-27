@@ -3,8 +3,10 @@ package com.prt2121.githubsdk.client;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.securepreferences.SecurePreferences;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class CredentialStorage {
+@Singleton public class CredentialStorage {
 
   private static final String USER_NAME = CredentialStorage.class.getSimpleName() + ".USER_NAME";
   private static final String USER_TOKEN = CredentialStorage.class.getSimpleName() + ".USER_TOKEN";
@@ -12,19 +14,17 @@ public class CredentialStorage {
       CredentialStorage.class.getSimpleName() + ".USER_SCOPES";
   private static final String USER_SCOPES_NO_ASK =
       CredentialStorage.class.getSimpleName() + ".USER_SCOPES_NO_ASK";
-  private final SharedPreferences.Editor editor;
-  private final SharedPreferences preferences;
+  private SharedPreferences.Editor editor;
+  private SharedPreferences preferences;
 
-  public CredentialStorage(Context context, String accessToken) {
-    preferences = new SecurePreferences(context, accessToken, "secure.xml");
-    editor = preferences.edit();
-    editor.putString(USER_TOKEN, accessToken);
-    editor.apply();
+  @Inject public CredentialStorage(Context context) {
+    preferences = new SecurePreferences(context);
   }
 
   public void storeToken(String accessToken) {
+    editor = preferences.edit();
     editor.putString(USER_TOKEN, accessToken);
-    editor.apply();
+    editor.commit();
   }
 
   public String token() {

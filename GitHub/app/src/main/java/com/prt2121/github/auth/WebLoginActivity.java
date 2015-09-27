@@ -83,16 +83,15 @@ public class WebLoginActivity extends AppCompatActivity {
           (LightProgressDialog) LightProgressDialog.create(WebLoginActivity.this, R.string.loading);
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        dialog.show();
+        //dialog.show();
       }
 
       @Override public void onPageFinished(WebView view, String url) {
-        dialog.dismiss();
+        //dialog.dismiss();
       }
 
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
         Uri uri = Uri.parse(url);
-        Log.d(WebLoginActivity.class.getSimpleName(), "scheme " + uri.getScheme());
         if (uri.getScheme().equals(getString(R.string.github_oauth_scheme))) {
           onUserLoggedIn(uri);
           return true;
@@ -111,14 +110,12 @@ public class WebLoginActivity extends AppCompatActivity {
 
   private void onUserLoggedIn(Uri uri) {
     if (uri != null && uri.getScheme().equals(getString(R.string.github_oauth_scheme))) {
-      openLoadingDialog();
+      //openLoadingDialog();
       String code = uri.getQueryParameter("code");
-      Log.d(WebLoginActivity.class.getSimpleName(), "code " + code);
       if (requestToken == null && code != null) {
         requestToken = new RequestToken(WebLoginActivity.this, code);
-        requestToken.execute()
-            .map(this::getTokenOrThrowException)
-            .doOnNext(t -> showLoadingUser())
+        requestToken.execute().map(this::getTokenOrThrowException)
+            //.doOnNext(t -> showLoadingUser())
             .flatMap(this::getUserAndToken)
             .doOnNext(t -> Timber.d(t.first.name))
             .compose(applySchedulers())
@@ -167,15 +164,15 @@ public class WebLoginActivity extends AppCompatActivity {
         .zipWith(Observable.just(token), (Func2<User, Token, Pair<User, Token>>) Pair::new);
   }
 
-  private void showLoadingUser() {
-    WebLoginActivity.this.runOnUiThread(
-        () -> progressDialog.setMessage(getString(R.string.loading_user)));
-  }
-
-  private void openLoadingDialog() {
-    progressDialog = LightProgressDialog.create(this, R.string.login_activity_authenticating);
-    progressDialog.show();
-  }
+  //private void showLoadingUser() {
+  //  WebLoginActivity.this.runOnUiThread(
+  //      () -> progressDialog.setMessage(getString(R.string.loading_user)));
+  //}
+  //
+  //private void openLoadingDialog() {
+  //  progressDialog = LightProgressDialog.create(this, R.string.login_activity_authenticating);
+  //  progressDialog.show();
+  //}
 
   protected <T1> Observable.Transformer<T1, T1> applySchedulers() {
     return observable -> observable.subscribeOn(Schedulers.io())

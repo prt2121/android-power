@@ -4,20 +4,25 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.prt2121.githubsdk.model.response.Repo;
+import com.prt2121.githubsdk.service.event.Event;
 import com.prt2121.githubsdk.service.repos.UserRepos;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import javax.inject.Inject;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class MainActivity extends RxAppCompatActivity {
 
   public static String TAG = MainActivity.class.getSimpleName();
 
   @Inject UserRepos userRepos;
+  @Inject Event event;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -33,6 +38,21 @@ public class MainActivity extends RxAppCompatActivity {
             .show());
 
     retrieveRepos();
+    retrievePrivateEvents();
+  }
+
+  private void retrievePrivateEvents() {
+    event.forUser("prt2121")
+        .events()
+        .flatMap(Observable::from)
+        .filter(e -> !e.publicEvent)
+        .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(applySchedulers())
+        .subscribe(es -> {
+          Timber.d("event " + es.toString());
+        }, throwable -> {
+          Timber.d(throwable.getLocalizedMessage());
+        });
   }
 
   private void retrieveRepos() {
@@ -40,12 +60,13 @@ public class MainActivity extends RxAppCompatActivity {
         .sortBy("update")
         .execute()
         .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(applySchedulers())
         .subscribe(rs -> {
           for (Repo repo : rs) {
-            Log.d(TAG, "" + repo.toString());
+            Timber.d(repo.toString());
           }
         }, throwable -> {
-          Log.e(TAG, "" + throwable.getLocalizedMessage());
+          Timber.d(throwable.getLocalizedMessage());
         });
   }
 
@@ -63,5 +84,10 @@ public class MainActivity extends RxAppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  protected <T1> Observable.Transformer<T1, T1> applySchedulers() {
+    return observable -> observable.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
   }
 }

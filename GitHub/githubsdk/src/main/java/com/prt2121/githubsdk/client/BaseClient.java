@@ -22,16 +22,18 @@ public abstract class BaseClient<T> {
   private static final String BASE_URL = "https://api.github.com";
   protected Context context;
   protected String token;
-  private CredentialStorage storage;
+  CredentialStorage storage;
 
   public BaseClient(Context context) {
-    this(context, null);
+    this.context = context.getApplicationContext();
+    storage = new CredentialStorage(context);
   }
 
   public BaseClient(Context context, String token) {
     this.context = context.getApplicationContext();
     this.token = token;
-    storage = new CredentialStorage(context, token);
+    storage = new CredentialStorage(context);
+    storage.storeToken(token);
   }
 
   protected Retrofit getRetrofit() {
@@ -42,7 +44,8 @@ public abstract class BaseClient<T> {
 
     if (getClient() != null) {
       builder.client(getClient());
-    } else if (!TextUtils.isEmpty(storage.token())) {
+    } else if (storage != null && !TextUtils.isEmpty(storage.token())) {
+      token = storage.token();
       OkHttpClient client = new OkHttpClient();
       client.interceptors().add(chain -> {
         Request request = chain.request();
