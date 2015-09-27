@@ -8,9 +8,6 @@ import retrofit.Converter;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static java.lang.String.format;
 
@@ -69,10 +66,5 @@ public abstract class BaseClient {
 
   protected OkHttpClient getClient() {
     return null;
-  }
-
-  protected <T> Observable.Transformer<T, T> applySchedulers() {
-    return observable -> observable.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
   }
 }

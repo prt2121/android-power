@@ -13,8 +13,6 @@ import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import javax.inject.Inject;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends RxAppCompatActivity {
@@ -45,7 +43,7 @@ public class MainActivity extends RxAppCompatActivity {
         .flatMap(Observable::from)
         .filter(e -> !e.publicEvent)
         .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
-        .compose(applySchedulers())
+        .compose(RxUtils.applySchedulers())
         .subscribe(es -> {
           Timber.d("event " + es.toString());
         }, throwable -> {
@@ -58,7 +56,7 @@ public class MainActivity extends RxAppCompatActivity {
         .sortBy("update")
         .repos()
         .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
-        .compose(applySchedulers())
+        .compose(RxUtils.applySchedulers())
         .subscribe(rs -> {
           for (Repo repo : rs) {
             Timber.d(repo.toString());
@@ -82,10 +80,5 @@ public class MainActivity extends RxAppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
-  }
-
-  protected <T1> Observable.Transformer<T1, T1> applySchedulers() {
-    return observable -> observable.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
   }
 }

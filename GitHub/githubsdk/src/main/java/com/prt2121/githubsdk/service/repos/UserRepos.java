@@ -34,11 +34,11 @@ public class UserRepos extends BaseClient {
   public Observable<List<Repo>> repos() {
     ReposService service = getRetrofit().create(ReposService.class);
     if (TextUtils.isEmpty(username) && TextUtils.isEmpty(sort)) {
-      return service.repos(DEFAULT_SORT).compose(this.<List<Repo>>applySchedulers());
+      return service.repos(DEFAULT_SORT);
     } else if (TextUtils.isEmpty(username)) {
-      return service.repos(sort).compose(this.<List<Repo>>applySchedulers());
+      return service.repos(sort);
     } else {
-      return service.repos(username, sort).compose(this.<List<Repo>>applySchedulers());
+      return service.repos(username, sort);
     }
   }
 }

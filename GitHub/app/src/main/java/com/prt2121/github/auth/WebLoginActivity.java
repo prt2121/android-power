@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.prt2121.github.MainActivity;
 import com.prt2121.github.R;
+import com.prt2121.github.RxUtils;
 import com.prt2121.githubsdk.model.response.Token;
 import com.prt2121.githubsdk.model.response.User;
 import com.prt2121.githubsdk.service.auth.AccountsHelper;
@@ -23,9 +24,7 @@ import com.prt2121.githubsdk.service.auth.RequestToken;
 import com.prt2121.githubsdk.service.user.AuthUser;
 import com.squareup.okhttp.HttpUrl;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class WebLoginActivity extends AppCompatActivity {
@@ -117,7 +116,7 @@ public class WebLoginActivity extends AppCompatActivity {
             //.doOnNext(t -> showLoadingUser())
             .flatMap(this::getUserAndToken)
             .doOnNext(t -> Timber.d(t.first.name))
-            .compose(applySchedulers())
+            .compose(RxUtils.applySchedulers())
             .subscribe(pair -> {
               setupAccount(pair);
               openMain();
@@ -172,11 +171,6 @@ public class WebLoginActivity extends AppCompatActivity {
   //  progressDialog = LightProgressDialog.create(this, R.string.login_activity_authenticating);
   //  progressDialog.show();
   //}
-
-  protected <T1> Observable.Transformer<T1, T1> applySchedulers() {
-    return observable -> observable.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
-  }
 
   private void openMain() {
     if (progressDialog != null) {
