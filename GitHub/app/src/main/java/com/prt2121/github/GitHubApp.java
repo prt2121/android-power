@@ -16,6 +16,7 @@ public class GitHubApp extends Application {
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
     }
+    RxActivityLifecycleCallbacks.init(this);
   }
 
   private void initializeInjector() {

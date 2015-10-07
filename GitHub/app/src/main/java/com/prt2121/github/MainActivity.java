@@ -33,15 +33,21 @@ public class MainActivity extends RxAppCompatActivity {
             .setAction("Action", null)
             .show());
 
-    retrieveRepos();
-    retrievePrivateEvents();
+    //retrieveRepos();
+    retrieveEvents();
+
+    RxActivityLifecycleCallbacks.getInstance()
+        .getLifecycle(this)
+        .subscribe(lifecycleEvent -> Timber.d(String.valueOf(lifecycleEvent.ordinal())),
+            throwable -> {
+              Timber.d(String.valueOf(throwable.toString()));
+            });
   }
 
-  private void retrievePrivateEvents() {
+  private void retrieveEvents() {
     event.forUser("prt2121")
         .events()
         .flatMap(Observable::from)
-        .filter(e -> !e.publicEvent)
         .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
         .compose(RxUtils.applySchedulers())
         .subscribe(es -> {
