@@ -15,7 +15,7 @@ final class RxActivityLifecycleCallbacks implements Application.ActivityLifecycl
 
   private static RxActivityLifecycleCallbacks instance;
 
-  private Map<Activity, BehaviorSubject<ActivityEvent>> activityBehaviorSubjectMap;
+  private Map<Activity, BehaviorSubject<RxActivityEvent>> activityBehaviorSubjectMap;
 
   public static RxActivityLifecycleCallbacks init(Application application) {
     if (instance == null) {
@@ -38,8 +38,8 @@ final class RxActivityLifecycleCallbacks implements Application.ActivityLifecycl
     application.registerActivityLifecycleCallbacks(this);
   }
 
-  public Observable<ActivityEvent> getLifecycle(Activity activity) {
-    BehaviorSubject<ActivityEvent> subject = activityBehaviorSubjectMap.get(activity);
+  public Observable<RxActivityEvent> getLifecycle(Activity activity) {
+    BehaviorSubject<RxActivityEvent> subject = activityBehaviorSubjectMap.get(activity);
 
     if (subject == null) {
       throw new IllegalStateException("The Activity is outside the lifecycle; cannot bind to it!");
@@ -49,27 +49,27 @@ final class RxActivityLifecycleCallbacks implements Application.ActivityLifecycl
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-    activityBehaviorSubjectMap.put(activity, BehaviorSubject.create(ActivityEvent.CREATE));
+    activityBehaviorSubjectMap.put(activity, BehaviorSubject.create(RxActivityEvent.CREATE));
   }
 
   @Override public void onActivityStarted(Activity activity) {
-    activityBehaviorSubjectMap.get(activity).onNext(ActivityEvent.START);
+    activityBehaviorSubjectMap.get(activity).onNext(RxActivityEvent.START);
   }
 
   @Override public void onActivityResumed(Activity activity) {
-    activityBehaviorSubjectMap.get(activity).onNext(ActivityEvent.RESUME);
+    activityBehaviorSubjectMap.get(activity).onNext(RxActivityEvent.RESUME);
   }
 
   @Override public void onActivityPaused(Activity activity) {
-    activityBehaviorSubjectMap.get(activity).onNext(ActivityEvent.PAUSE);
+    activityBehaviorSubjectMap.get(activity).onNext(RxActivityEvent.PAUSE);
   }
 
   @Override public void onActivityStopped(Activity activity) {
-    activityBehaviorSubjectMap.get(activity).onNext(ActivityEvent.STOP);
+    activityBehaviorSubjectMap.get(activity).onNext(RxActivityEvent.STOP);
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
-    activityBehaviorSubjectMap.remove(activity).onNext(ActivityEvent.DESTROY);
+    activityBehaviorSubjectMap.remove(activity).onNext(RxActivityEvent.DESTROY);
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {

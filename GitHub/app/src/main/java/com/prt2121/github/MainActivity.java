@@ -11,6 +11,7 @@ import com.prt2121.githubsdk.service.event.Event;
 import com.prt2121.githubsdk.service.repos.UserRepos;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import rx.Observable;
 import timber.log.Timber;
@@ -34,14 +35,24 @@ public class MainActivity extends RxAppCompatActivity {
             .show());
 
     //retrieveRepos();
-    retrieveEvents();
+    //retrieveEvents();
 
-    RxActivityLifecycleCallbacks.getInstance()
-        .getLifecycle(this)
-        .subscribe(lifecycleEvent -> Timber.d(String.valueOf(lifecycleEvent.ordinal())),
-            throwable -> {
-              Timber.d(String.valueOf(throwable.toString()));
-            });
+    Observable.combineLatest(Observable.interval(1, TimeUnit.SECONDS),
+        RxActivityLifecycleCallbacks.getInstance().getLifecycle(this),
+        (l, rxActivityEvent) -> (rxActivityEvent != RxActivityEvent.DESTROY) ? l : 0)
+        .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(RxUtils.applySchedulers())
+        .subscribe(l -> Timber.d(l.toString()), throwable -> {
+          Timber.d(String.valueOf(throwable.toString()));
+        });
+    //
+    //RxActivityLifecycleCallbacks.getInstance()
+    //    .getLifecycle(this)
+    //    .zipWith(Observable.interval(1, TimeUnit.SECONDS),
+    //        (rxActivityEvent, l) -> (rxActivityEvent != RxActivityEvent.DESTROY) ? l : 0)
+    //    .subscribe(l -> Timber.d(l.toString()), throwable -> {
+    //      Timber.d(String.valueOf(throwable.toString()));
+    //    });
   }
 
   private void retrieveEvents() {
