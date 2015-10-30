@@ -1,9 +1,11 @@
 package com.prt2121.coord;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -12,89 +14,77 @@ import android.view.View;
 @SuppressWarnings("unused") public class HeaderBehavior
     extends CoordinatorLayout.Behavior<HeaderView> {
 
-  private final static float MIN_PERCENTAGE_SIZE = 0.3f;
-  private final Context context;
-  private float maxSize;
-  private float padding;
+  private Context context;
 
-  private int startXPosition;
-  private int finalXPosition;
-  private int startYPosition;
-  private int finalYPosition;
-  private int finalHeight;
-  private int startHeight;
-  private float startToolbarPosition;
+  private int startMarginLeft;
+  private int endMarginLeft;
+  private int marginRight;
+  private int startMarginBottom;
+  private boolean isHide;
+  //private float titleTextSize = -1;
+  //private float subtitleTextSize = -1;
+  int startWidth = -1;
+  int startHeight = -1;
 
   public HeaderBehavior(Context context, AttributeSet attrs) {
     this.context = context;
-    maxSize = context.getResources().getDimension(R.dimen.max_width);
-    padding = 0;
   }
 
   @Override
   public boolean layoutDependsOn(CoordinatorLayout parent, HeaderView child, View dependency) {
-    return dependency instanceof Toolbar;
+    return dependency instanceof AppBarLayout;
   }
 
   @Override public boolean onDependentViewChanged(CoordinatorLayout parent, HeaderView child,
       View dependency) {
 
-    // Called once
-    if (startYPosition == 0) {
-      startYPosition = (int) (child.getY() + (child.getHeight() / 2));
-    }
-    if (finalYPosition == 0) {
-      finalYPosition = (dependency.getHeight() / 2);
-    }
-    if (startHeight == 0) {
-      startHeight = child.getHeight();
-    }
-    if (finalHeight == 0) {
-      finalHeight = context.getResources().getDimensionPixelOffset(R.dimen.final_width);
-    }
+    int maxScroll = ((AppBarLayout) dependency).getTotalScrollRange();
+    float percentage = Math.abs(dependency.getY()) / (float) maxScroll;
 
-    if (startXPosition == 0) {
-      startXPosition = (int) (child.getX() + (child.getWidth() / 2));
-    }
+    float childPosition = dependency.getHeight() + dependency.getY() - child.getHeight()
+        - (getToolbarHeight() - child.getHeight()) * percentage / 2;
 
-    if (finalXPosition == 0) {
-      finalXPosition = context.getResources()
-          .getDimensionPixelOffset(R.dimen.abc_action_bar_content_inset_material) + (finalHeight
-          / 2);
-    }
+    childPosition = childPosition - startMarginBottom * (1f - percentage);
 
-    if (startToolbarPosition == 0) {
-      startToolbarPosition = dependency.getY() + (dependency.getHeight() / 2);
-    }
-
-    final int maxScrollDistance = (int) (startToolbarPosition - getStatusBarHeight());
-    float expandedPercentage = dependency.getY() / maxScrollDistance;
-
-    float distanceYToSubtract =
-        ((startYPosition - finalYPosition) * (1f - expandedPercentage)) + (child.getHeight() / 2);
-
-    float distanceXToSubtract =
-        ((startXPosition - finalXPosition) * (1f - expandedPercentage)) + (child.getWidth() / 2);
-
-    float heightToSubtract = (startHeight - finalHeight) * (1f - expandedPercentage);
-
-    child.setY(startYPosition - distanceYToSubtract);
-    child.setX(startXPosition - distanceXToSubtract);
-
-    int proportionalAvatarSize = (int) (maxSize * (expandedPercentage));
+    //if (titleTextSize == -1 || subtitleTextSize == -1) {
+    //  titleTextSize = child.title.getTextSize();
+    //  subtitleTextSize = child.subTitle.getTextSize();
+    //}
+    //child.title.setTextSize(titleTextSize * (1 - percentage));
+    //child.subTitle.setTextSize(subtitleTextSize * (1 - percentage));
 
     CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
-    lp.width = (int) (startHeight - heightToSubtract);
-    lp.height = (int) (startHeight - heightToSubtract);
+
+    if(startWidth == -1 || startHeight == -1) {
+      startWidth = lp.width;
+      startHeight = lp.height;
+    }
+    lp.width = (int) ((1 - percentage) * startWidth);
+    lp.height = (int) ((1 - percentage) * startHeight);
+    lp.leftMargin = (int) (percentage * endMarginLeft) + startMarginLeft;
+    lp.rightMargin = marginRight;
     child.setLayoutParams(lp);
+
+    child.setY(childPosition);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      if (isHide && percentage < 1) {
+        child.setVisibility(View.VISIBLE);
+        isHide = false;
+      } else if (!isHide && percentage == 1) {
+        child.setVisibility(View.GONE);
+        isHide = true;
+      }
+    }
     return true;
   }
 
-  public int getStatusBarHeight() {
+  public int getToolbarHeight() {
     int result = 0;
-    int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-    if (resourceId > 0) {
-      result = context.getResources().getDimensionPixelSize(resourceId);
+    TypedValue tv = new TypedValue();
+    if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+      result = TypedValue.complexToDimensionPixelSize(tv.data,
+          context.getResources().getDisplayMetrics());
     }
     return result;
   }

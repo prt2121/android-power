@@ -1,6 +1,7 @@
 package com.prt2121.coord;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,7 @@ public class ScrollingActivity extends AppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar toolbar;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout collapsingToolbarLayout;
+  @Bind(R.id.float_header_view) HeaderView floatHeaderView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -25,6 +27,8 @@ public class ScrollingActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     collapsingToolbarLayout.setTitle("");
+
+    floatHeaderView.bindTo("Title", "Subtitle");
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
@@ -54,4 +58,5 @@ public class ScrollingActivity extends AppCompatActivity {
     }
     return super.onOptionsItemSelected(item);
   }
+
 }
