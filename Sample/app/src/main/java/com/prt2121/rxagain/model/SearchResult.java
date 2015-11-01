@@ -1,77 +1,55 @@
-
 package com.prt2121.rxagain.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.List;
 
-@Generated("org.jsonschema2pojo")
 public class SearchResult {
 
-    @SerializedName("total_count")
-    @Expose
-    private Integer totalCount;
-    @SerializedName("incomplete_results")
-    @Expose
-    private Boolean incompleteResults;
-    @SerializedName("items")
-    @Expose
-    private List<Item> items = new ArrayList<Item>();
+  @SerializedName("total_count") @Expose private Integer totalCount;
+  @SerializedName("incomplete_results") @Expose private Boolean incompleteResults;
+  @SerializedName("items") @Expose private List<Repo> repos = new ArrayList<Repo>();
 
-    /**
-     * 
-     * @return
-     *     The totalCount
-     */
-    public Integer getTotalCount() {
-        return totalCount;
-    }
+  /**
+   * @return The totalCount
+   */
+  public Integer getTotalCount() {
+    return totalCount;
+  }
 
-    /**
-     * 
-     * @param totalCount
-     *     The total_count
-     */
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
+  /**
+   * @param totalCount The total_count
+   */
+  public void setTotalCount(Integer totalCount) {
+    this.totalCount = totalCount;
+  }
 
-    /**
-     * 
-     * @return
-     *     The incompleteResults
-     */
-    public Boolean getIncompleteResults() {
-        return incompleteResults;
-    }
+  /**
+   * @return The incompleteResults
+   */
+  public Boolean getIncompleteResults() {
+    return incompleteResults;
+  }
 
-    /**
-     * 
-     * @param incompleteResults
-     *     The incomplete_results
-     */
-    public void setIncompleteResults(Boolean incompleteResults) {
-        this.incompleteResults = incompleteResults;
-    }
+  /**
+   * @param incompleteResults The incomplete_results
+   */
+  public void setIncompleteResults(Boolean incompleteResults) {
+    this.incompleteResults = incompleteResults;
+  }
 
-    /**
-     * 
-     * @return
-     *     The items
-     */
-    public List<Item> getItems() {
-        return items;
-    }
+  /**
+   * @return The repos
+   */
+  public List<Repo> getRepos() {
+    return repos;
+  }
 
-    /**
-     * 
-     * @param items
-     *     The items
-     */
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
-
+  /**
+   * @param repos The repos
+   */
+  public void setRepos(List<Repo> repos) {
+    this.repos = repos;
+  }
 }

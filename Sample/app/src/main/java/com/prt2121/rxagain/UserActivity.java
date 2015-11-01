@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.gson.GsonBuilder;
@@ -18,12 +17,12 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.jakewharton.rxbinding.support.v7.widget.RxToolbar;
-import com.jakewharton.rxbinding.widget.RxTextView;
 import com.prt2121.rxagain.model.User;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import hugo.weaving.DebugLog;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,14 +42,13 @@ public class UserActivity extends AppCompatActivity {
   @Bind(R.id.recyclerView) RecyclerView recyclerView;
   @Bind(R.id.swipeRefreshLayout) SwipeRefreshLayout swipeRefreshLayout;
   @Bind(R.id.toolbar) Toolbar toolbar;
-  @Bind(R.id.searchEditText) EditText searchEditText;
 
   private OkHttpClient httpClient = new OkHttpClient();
   private List<User> users = new ArrayList<>();
   private UserListAdapter listAdapter = new UserListAdapter(users);
   private Void UNIT = null;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+  @DebugLog @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_user);
     ButterKnife.bind(this);
@@ -62,12 +60,12 @@ public class UserActivity extends AppCompatActivity {
 
     final Observable<Void> menuItemClicks =
         RxToolbar.itemClicks(toolbar).filter(new Func1<MenuItem, Boolean>() {
-          @Override public Boolean call(MenuItem menuItem) {
+          @DebugLog @Override public Boolean call(MenuItem menuItem) {
             Timber.d(menuItem.getTitle().toString());
             return menuItem.getItemId() == R.id.action_refresh;
           }
         }).map(new Func1<MenuItem, Void>() {
-          @Override public Void call(MenuItem menuItem) {
+          @DebugLog @Override public Void call(MenuItem menuItem) {
             Timber.d(menuItem.getTitle().toString());
             return null;
           }
@@ -77,74 +75,68 @@ public class UserActivity extends AppCompatActivity {
         RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).mergeWith(menuItemClicks);
 
     Observable<String> requests = refreshes.startWith(UNIT).map(new Func1<Void, String>() {
-      @Override public String call(Void v) {
+      @DebugLog @Override public String call(Void v) {
         int randomOffset = (int) Math.floor(Math.random() * 500);
         return "https://api.github.com/users?since=" + randomOffset;
       }
     });
 
     requests.flatMap(new Func1<String, Observable<String>>() {
-      @Override public Observable<String> call(String url) {
+      @DebugLog @Override public Observable<String> call(String url) {
         return requestJson(url);
       }
     }).map(new Func1<String, ArrayList<User>>() {
-      @Override public ArrayList<User> call(String json) {
+      @DebugLog @Override public ArrayList<User> call(String json) {
         Type type = new TypeToken<ArrayList<User>>() {
         }.getType();
         return new GsonBuilder().create().fromJson(json, type);
       }
     }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<ArrayList<User>>() {
-      @Override public void call(ArrayList<User> userList) {
+      @DebugLog @Override public void call(ArrayList<User> userList) {
         swipeRefreshLayout.setRefreshing(false);
         users.clear();
         users.addAll(userList);
         listAdapter.notifyDataSetChanged();
       }
     }, new Action1<Throwable>() {
-      @Override public void call(Throwable throwable) {
+      @DebugLog @Override public void call(Throwable throwable) {
         Timber.e(throwable.getMessage());
       }
     });
 
     RxRecyclerView.scrollEvents(recyclerView).map(new Func1<RecyclerViewScrollEvent, Boolean>() {
-      @Override public Boolean call(RecyclerViewScrollEvent event) {
+      @DebugLog @Override public Boolean call(RecyclerViewScrollEvent event) {
         return reachingLastItem(event);
       }
     }).distinctUntilChanged().filter(new Func1<Boolean, Boolean>() {
-      @Override public Boolean call(Boolean bool) {
+      @DebugLog @Override public Boolean call(Boolean bool) {
         return bool;
       }
     }).throttleLast(2, TimeUnit.SECONDS).map(new Func1<Boolean, String>() {
-      @Override public String call(Boolean bool) {
+      @DebugLog @Override public String call(Boolean bool) {
         int randomOffset = (int) Math.floor(Math.random() * 500);
         return "https://api.github.com/users?since=" + randomOffset;
       }
     }).flatMap(new Func1<String, Observable<String>>() {
-      @Override public Observable<String> call(String url) {
+      @DebugLog @Override public Observable<String> call(String url) {
         return requestJson(url);
       }
     }).map(new Func1<String, ArrayList<User>>() {
-      @Override public ArrayList<User> call(String json) {
+      @DebugLog @Override public ArrayList<User> call(String json) {
         Type type = new TypeToken<ArrayList<User>>() {
         }.getType();
         return new GsonBuilder().create().fromJson(json, type);
       }
     }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<ArrayList<User>>() {
-      @Override public void call(ArrayList<User> userList) {
+      @DebugLog @Override public void call(ArrayList<User> userList) {
         users.addAll(userList);
         listAdapter.notifyDataSetChanged();
       }
     }, new Action1<Throwable>() {
-      @Override public void call(Throwable throwable) {
+      @DebugLog @Override public void call(Throwable throwable) {
         Timber.e(throwable.getMessage());
       }
     });
-
-    RxTextView.textChanges(searchEditText).doOnNext(new Action1<CharSequence>() {
-      @Override public void call(CharSequence charSequence) {
-        Timber.e(charSequence.toString());
-      }
-    }).subscribe();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {

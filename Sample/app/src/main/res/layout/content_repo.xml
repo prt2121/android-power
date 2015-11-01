@@ -10,21 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_user"
+    tools:showIn="@layout/activity_repo"
+    tools:context="com.prt2121.rxagain.RepoActivity"
     >
-
-  <android.support.v4.widget.SwipeRefreshLayout
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/swipeRefreshLayout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      >
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-  </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

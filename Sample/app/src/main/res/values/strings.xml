@@ -2,4 +2,5 @@
   <string name="app_name">Sample</string>
   <string name="action_refresh">Refresh</string>
   <string name="search_edit_text_hint">Filter</string>
+  <string name="title_activity_repo">RepoActivity</string>
 </resources>
