@@ -1,5 +1,6 @@
 package com.prt2121.everywhere
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Window
@@ -19,9 +20,10 @@ class MainActivity : BaseActivity() {
 
   val AUTH_URL = "https://secure.meetup.com/oauth2/authorize"
   val TOKEN_URL = "https://secure.meetup.com/oauth2/access"
-  val CONSUMER_KEY = ""
-  val CONSUMER_SECRET = ""
+  val CONSUMER_KEY = "6n4l5ohf8netfklaogmqvb32s8"
+  val CONSUMER_SECRET = "fjpbu2s1o8f8k709fb24rd06at"
   val REDIRECT_URI = "http://prt2121.github.io"
+  val ACCESS_EXTRA = "access_token"
 
   override fun onCreate(savedInstanceState: Bundle?) {
     requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -38,13 +40,13 @@ class MainActivity : BaseActivity() {
           .setRedirectURI(REDIRECT_URI)
           .buildQueryMessage()
       webView.loadUrl("${request.locationUri}&response_type=code&set_mobile=on")
-
     } catch (e: OAuthSystemException) {
       println("OAuth request failed ${e.message}")
     }
   }
 
   inner class LoginWebViewClient : WebViewClient() {
+
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
       val uri = Uri.parse(url)
       val code = uri.getQueryParameter("code")
@@ -63,6 +65,13 @@ class MainActivity : BaseActivity() {
           val response = oAuthClient.accessToken(request)
           println("accessToken ${response.accessToken}")
           println("expiresIn ${response.expiresIn}")
+          TokenStorage(this@MainActivity).save(response.accessToken)
+          runOnUiThread {
+            val intent = Intent(this@MainActivity, GroupActivity::class.java)
+            intent.putExtra(ACCESS_EXTRA, response.accessToken)
+            startActivity(intent)
+            finish()
+          }
         }
 
       } else if (error != null) {
