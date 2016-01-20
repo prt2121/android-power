@@ -11,5 +11,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.prt2121.everywhere.GroupFragment"
-    tools:listitem="@layout/fragment_group"
+    tools:listitem="@layout/item_group"
     />

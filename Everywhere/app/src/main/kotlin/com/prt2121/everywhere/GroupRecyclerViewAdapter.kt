@@ -7,34 +7,39 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import com.prt2121.everywhere.GroupFragment.OnListFragmentInteractionListener
-import com.prt2121.everywhere.model.DummyContent.Group
+import com.prt2121.everywhere.model.Group
 
 /**
  * Created by pt2121 on 1/18/16.
  *
  * [RecyclerView.Adapter] that can display a [Group] and makes a call to the
  * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
  */
-class GroupRecyclerViewAdapter(private val mValues: List<Group>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>() {
+class GroupRecyclerViewAdapter(private val groups: MutableList<Group>, private val listener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>() {
+
+  fun update(gs: List<Group>) {
+    groups.clear()
+    groups.addAll(gs)
+    notifyDataSetChanged()
+  }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_group, parent, false)
+    val view = LayoutInflater.from(parent.context).inflate(R.layout.item_group, parent, false)
     return ViewHolder(view)
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    holder.mItem = mValues[position]
-    holder.mIdView.text = mValues[position].id
-    holder.mContentView.text = mValues[position].content
+    holder.mItem = groups[position]
+    holder.mIdView.text = groups[position].name
+    holder.mContentView.text = groups[position].city
 
     holder.mView.setOnClickListener {
-      mListener?.onListFragmentInteraction(holder.mItem!!)
+      listener?.onListFragmentInteraction(holder.mItem!!)
     }
   }
 
   override fun getItemCount(): Int {
-    return mValues.size
+    return groups.size
   }
 
   inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {

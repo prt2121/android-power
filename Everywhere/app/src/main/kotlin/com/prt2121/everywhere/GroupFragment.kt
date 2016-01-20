@@ -9,14 +9,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.prt2121.everywhere.model.DummyContent
-import com.prt2121.everywhere.model.DummyContent.Group
+import com.prt2121.everywhere.model.Group
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
+import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -37,31 +37,6 @@ class GroupFragment : Fragment() {
     if (arguments != null) {
       mColumnCount = arguments.getInt(ARG_COLUMN_COUNT)
     }
-
-    val token = TokenStorage(activity).retrieve()
-    val logging = HttpLoggingInterceptor()
-    logging.setLevel(Level.BODY)
-    val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-
-    val retrofit = Retrofit.Builder()
-        .baseUrl("https://api.meetup.com")
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        .build()
-    val service = retrofit.create(MeetupService::class.java)
-    service.groups("Bearer ${token!!}", "10003", "1", "25")
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          it.forEach { println(it.name) }
-        }, {
-          println(it.message)
-        }, {
-          println("completed!")
-        })
   }
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -75,7 +50,34 @@ class GroupFragment : Fragment() {
       } else {
         view.layoutManager = GridLayoutManager(context, mColumnCount)
       }
-      view.adapter = GroupRecyclerViewAdapter(DummyContent.ITEMS, mListener)
+      view.adapter = GroupRecyclerViewAdapter(arrayListOf(), mListener)
+
+      val token = Observable.just(TokenStorage(activity).retrieve())
+      val logging = HttpLoggingInterceptor()
+      logging.setLevel(Level.BODY)
+      val client = OkHttpClient.Builder()
+          .addInterceptor(logging)
+          .build()
+
+      val retrofit = Retrofit.Builder()
+          .baseUrl("https://api.meetup.com")
+          .client(client)
+          .addConverterFactory(GsonConverterFactory.create())
+          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+          .build()
+      val service = retrofit.create(MeetupService::class.java)
+      token.flatMap { service.groups("Bearer $it", "10003", "1", "25") }
+          //.flatMap { Observable.from(it.map { it.name }) }
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe({
+            println("${it.count()}")
+            (view.adapter as GroupRecyclerViewAdapter).update(it)
+          }, {
+            println(it.message)
+          }, {
+            println("completed!")
+          })
     }
     return view
   }
