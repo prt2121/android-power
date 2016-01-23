@@ -36,19 +36,12 @@ class GroupFragment : Fragment() {
     if (view is RecyclerView) {
       view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
-
-      subscription = UserLocation(activity)
-          .lastBestLocation()
-          .doOnNext { println("it == null ${it == null}") }
-          .filter { it != null }
-          .map { it.latitude to it.longitude }
-          .flatMap { MeetupUtils.groups(TokenStorage(activity).retrieve(), it.first, it.second) }
+      subscription = MeetupUtils.groupsByLatLng(TokenStorage(activity).retrieve(), UserLocation(activity).lastBestLocation())
           .subscribe(
               view.adapter as GroupRecyclerViewAdapter
               , Action1<kotlin.Throwable> { println(it.message) }
               , Action0 { println("completed") }
           )
-
     }
     return view
   }

@@ -21,13 +21,8 @@ class GroupRecyclerViewAdapter(private val groups: MutableList<Group>,
     RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>(), Action1<ArrayList<Group>> {
 
   override fun call(groups: ArrayList<Group>) {
-    println("groups ${groups.size}")
-    update(groups)
-  }
-
-  fun update(gs: List<Group>) {
-    groups.clear()
-    groups.addAll(gs)
+    this.groups.clear()
+    this.groups.addAll(groups)
     notifyDataSetChanged()
   }
 
