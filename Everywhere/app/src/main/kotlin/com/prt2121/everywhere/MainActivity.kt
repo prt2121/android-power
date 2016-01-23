@@ -20,8 +20,8 @@ class MainActivity : BaseActivity() {
 
   val AUTH_URL = "https://secure.meetup.com/oauth2/authorize"
   val TOKEN_URL = "https://secure.meetup.com/oauth2/access"
-  val CONSUMER_KEY = "6n4l5ohf8netfklaogmqvb32s8"
-  val CONSUMER_SECRET = "fjpbu2s1o8f8k709fb24rd06at"
+  val CONSUMER_KEY = ""
+  val CONSUMER_SECRET = ""
   val REDIRECT_URI = "http://prt2121.github.io"
   val ACCESS_EXTRA = "access_token"
 

@@ -3,9 +3,9 @@ package com.prt2121.everywhere
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,29 +27,18 @@ import rx.schedulers.Schedulers
  * interface.
  */
 class GroupFragment : Fragment() {
-  // TODO: Customize parameters
-  private var mColumnCount = 1
   private var mListener: OnListFragmentInteractionListener? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     retainInstance = true
-    if (arguments != null) {
-      mColumnCount = arguments.getInt(ARG_COLUMN_COUNT)
-    }
   }
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.fragment_group_list, container, false)
 
-    // Set the adapter
     if (view is RecyclerView) {
-      val context = view.getContext()
-      if (mColumnCount <= 1) {
-        view.layoutManager = LinearLayoutManager(context)
-      } else {
-        view.layoutManager = GridLayoutManager(context, mColumnCount)
-      }
+      view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), mListener)
 
       val token = Observable.just(TokenStorage(activity).retrieve())
@@ -111,16 +100,8 @@ class GroupFragment : Fragment() {
 
   companion object {
 
-    // TODO: Customize parameter argument names
-    private val ARG_COLUMN_COUNT = "column-count"
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused") fun newInstance(columnCount: Int): GroupFragment {
-      val fragment = GroupFragment()
-      val args = Bundle()
-      args.putInt(ARG_COLUMN_COUNT, columnCount)
-      fragment.arguments = args
-      return fragment
+    @SuppressWarnings("unused") fun newInstance(): GroupFragment {
+      return GroupFragment()
     }
   }
 }

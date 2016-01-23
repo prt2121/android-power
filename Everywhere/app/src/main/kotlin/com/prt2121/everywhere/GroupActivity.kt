@@ -25,7 +25,7 @@ class GroupActivity : BaseActivity(), GroupFragment.OnListFragmentInteractionLis
 
     if (findViewById(R.id.fragment_container) != null && savedInstanceState == null) {
       supportFragmentManager.beginTransaction()
-          .add(R.id.fragment_container, GroupFragment.newInstance(1)).commit()
+          .add(R.id.fragment_container, GroupFragment.newInstance()).commit()
     }
   }
 }
