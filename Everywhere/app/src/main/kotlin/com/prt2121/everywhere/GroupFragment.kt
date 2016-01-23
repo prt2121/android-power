@@ -56,7 +56,6 @@ class GroupFragment : Fragment() {
           .build()
       val service = retrofit.create(MeetupService::class.java)
       token.flatMap { service.groups("Bearer $it", "10003", "1", "25") }
-          //.flatMap { Observable.from(it.map { it.name }) }
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe({

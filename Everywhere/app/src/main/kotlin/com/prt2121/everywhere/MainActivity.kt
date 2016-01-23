@@ -18,12 +18,8 @@ import org.jetbrains.anko.async
  */
 class MainActivity : BaseActivity() {
 
-  val AUTH_URL = "https://secure.meetup.com/oauth2/authorize"
-  val TOKEN_URL = "https://secure.meetup.com/oauth2/access"
-  val CONSUMER_KEY = ""
-  val CONSUMER_SECRET = ""
-  val REDIRECT_URI = "http://prt2121.github.io"
-  val ACCESS_EXTRA = "access_token"
+  val CONSUMER_KEY by lazy { getString(R.string.consumer_key) }
+  val CONSUMER_SECRET by lazy { getString(R.string.consumer_secret) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -63,8 +59,6 @@ class MainActivity : BaseActivity() {
 
         async() {
           val response = oAuthClient.accessToken(request)
-          println("accessToken ${response.accessToken}")
-          println("expiresIn ${response.expiresIn}")
           TokenStorage(this@MainActivity).save(response.accessToken)
           runOnUiThread {
             val intent = Intent(this@MainActivity, GroupActivity::class.java)
@@ -79,5 +73,12 @@ class MainActivity : BaseActivity() {
       }
       return false
     }
+  }
+
+  companion object {
+    const val AUTH_URL = "https://secure.meetup.com/oauth2/authorize"
+    const val TOKEN_URL = "https://secure.meetup.com/oauth2/access"
+    const val REDIRECT_URI = "http://prt2121.github.io"
+    const val ACCESS_EXTRA = "access_token"
   }
 }
