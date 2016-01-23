@@ -22,4 +22,4 @@ data class NextEvent(
     @SerializedName("utc_offset")
     @Expose
     var utcOffset: Int
-    )
+)

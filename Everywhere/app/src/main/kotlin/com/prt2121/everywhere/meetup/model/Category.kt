@@ -2,6 +2,7 @@ package com.prt2121.everywhere.meetup.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+
 /**
  * Created by pt2121 on 1/18/16.
  */

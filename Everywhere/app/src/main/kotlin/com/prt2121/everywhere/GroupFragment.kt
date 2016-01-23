@@ -9,24 +9,15 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.prt2121.everywhere.meetup.MeetupService
 import com.prt2121.everywhere.meetup.MeetupUtils
 import com.prt2121.everywhere.meetup.model.Group
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.HttpLoggingInterceptor.Level
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
-import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
 /**
  * Created by pt2121 on 1/18/16.
  *
- * Activities containing this fragment MUST implement the [OnListFragmentInteractionListener]
- * interface.
+ * Activities containing this fragment MUST implement the [OnListFragmentInteractionListener] interface.
  */
 class GroupFragment : Fragment() {
   private var listener: OnListFragmentInteractionListener? = null

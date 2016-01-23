@@ -19,4 +19,4 @@ data class Photo(
     @SerializedName("thumb_link")
     @Expose
     var thumbLink: String
-    )
+)

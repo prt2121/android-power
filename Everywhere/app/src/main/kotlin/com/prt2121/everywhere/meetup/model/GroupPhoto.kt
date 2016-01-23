@@ -19,4 +19,4 @@ data class GroupPhoto(
     @SerializedName("thumb_link")
     @Expose
     var thumbLink: String
-    )
+)
