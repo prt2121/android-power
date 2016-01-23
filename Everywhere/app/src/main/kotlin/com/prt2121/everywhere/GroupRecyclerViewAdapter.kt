@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
 import com.prt2121.everywhere.GroupFragment.OnListFragmentInteractionListener
 import com.prt2121.everywhere.meetup.model.Group
+import rx.functions.Action1
+import java.util.*
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -15,7 +16,14 @@ import com.prt2121.everywhere.meetup.model.Group
  * [RecyclerView.Adapter] that can display a [Group] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class GroupRecyclerViewAdapter(private val groups: MutableList<Group>, private val listener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>() {
+class GroupRecyclerViewAdapter(private val groups: MutableList<Group>,
+                               private val listener: OnListFragmentInteractionListener?) :
+    RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>(), Action1<ArrayList<Group>> {
+
+  override fun call(groups: ArrayList<Group>) {
+    println("groups ${groups.size}")
+    update(groups)
+  }
 
   fun update(gs: List<Group>) {
     groups.clear()

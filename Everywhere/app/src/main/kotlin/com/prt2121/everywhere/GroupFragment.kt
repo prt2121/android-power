@@ -9,10 +9,12 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.prt2121.everywhere.Rx.applySchedulers
 import com.prt2121.everywhere.meetup.MeetupUtils
 import com.prt2121.everywhere.meetup.model.Group
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import rx.functions.Action0
+import rx.functions.Action1
+import java.util.*
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -34,19 +36,16 @@ class GroupFragment : Fragment() {
       view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
 
-      val token = TokenStorage(activity).retrieve()
       val service = MeetupUtils.meetupService()
+      val token = TokenStorage(activity).retrieve()
       token.flatMap { service.groups("Bearer $it", "10003", "1", "25") }
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe({
-            println("${it.count()}")
-            (view.adapter as GroupRecyclerViewAdapter).update(it)
-          }, {
-            println(it.message)
-          }, {
-            println("completed!")
-          })
+          .compose(applySchedulers<ArrayList<Group>>())
+          .subscribe(
+              view.adapter as GroupRecyclerViewAdapter
+              , Action1<kotlin.Throwable> { println(it.message) }
+              , Action0 { println("completed") }
+          )
+
     }
     return view
   }
