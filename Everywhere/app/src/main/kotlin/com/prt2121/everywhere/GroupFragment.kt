@@ -9,12 +9,12 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.prt2121.everywhere.Rx.applySchedulers
 import com.prt2121.everywhere.meetup.MeetupUtils
 import com.prt2121.everywhere.meetup.model.Group
+import com.prt2121.summon.location.UserLocation
+import rx.Subscription
 import rx.functions.Action0
 import rx.functions.Action1
-import java.util.*
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -23,6 +23,7 @@ import java.util.*
  */
 class GroupFragment : Fragment() {
   private var listener: OnListFragmentInteractionListener? = null
+  private var subscription: Subscription? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -36,10 +37,12 @@ class GroupFragment : Fragment() {
       view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
 
-      val service = MeetupUtils.meetupService()
-      val token = TokenStorage(activity).retrieve()
-      token.flatMap { service.groups("Bearer $it", "10003", "1", "25") }
-          .compose(applySchedulers<ArrayList<Group>>())
+      subscription = UserLocation(activity)
+          .lastBestLocation()
+          .doOnNext { println("it == null ${it == null}") }
+          .filter { it != null }
+          .map { it.latitude to it.longitude }
+          .flatMap { MeetupUtils.groups(TokenStorage(activity).retrieve(), it.first, it.second) }
           .subscribe(
               view.adapter as GroupRecyclerViewAdapter
               , Action1<kotlin.Throwable> { println(it.message) }
@@ -48,6 +51,13 @@ class GroupFragment : Fragment() {
 
     }
     return view
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    if (subscription != null && !subscription!!.isUnsubscribed) {
+      subscription?.unsubscribe()
+    }
   }
 
   override fun onAttach(context: Context?) {

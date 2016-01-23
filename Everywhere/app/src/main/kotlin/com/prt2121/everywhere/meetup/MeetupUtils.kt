@@ -1,15 +1,31 @@
 package com.prt2121.everywhere.meetup
 
+import com.prt2121.everywhere.Rx
+import com.prt2121.everywhere.meetup.model.Group
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
+import rx.Observable
+import java.util.*
 
 /**
  * Created by pt2121 on 1/23/16.
  */
 object MeetupUtils {
+
+  fun groups(token: Observable<String>, lat: Double, lng: Double, radius: Int = 10): Observable<ArrayList<Group>> {
+    val service = MeetupUtils.meetupService()
+    return token.flatMap { service.groupsByLatLong("Bearer $it", lat, lng, radius, "25") }
+        .compose(Rx.applySchedulers<ArrayList<Group>>())
+  }
+
+  fun groups(token: Observable<String>): Observable<ArrayList<Group>> {
+    val service = MeetupUtils.meetupService()
+    return token.flatMap { service.groupsByZip("Bearer $it", "10003", "1", "25") }
+        .compose(Rx.applySchedulers<ArrayList<Group>>())
+  }
 
   fun meetupService(): MeetupService {
     val logging = HttpLoggingInterceptor()

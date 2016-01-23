@@ -12,9 +12,17 @@ import java.util.*
  */
 interface MeetupService {
   @GET("find/groups")
-  fun groups(
+  fun groupsByZip(
       @Header("Authorization") token: String,
       @Query("zip") zip: String,
       @Query("radius") radius: String,
+      @Query("category") category: String): Observable<ArrayList<Group>>
+
+  @GET("find/groups")
+  fun groupsByLatLong(
+      @Header("Authorization") token: String,
+      @Query("lat") lat: Double,
+      @Query("lon") lng: Double,
+      @Query("radius") radius: Int,
       @Query("category") category: String): Observable<ArrayList<Group>>
 }
