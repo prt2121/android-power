@@ -1,4 +1,4 @@
-package com.prt2121.everywhere.model
+package com.prt2121.everywhere.meetup.model
 
 /**
  * Created by pt2121 on 1/18/16.

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import com.prt2121.everywhere.GroupFragment.OnListFragmentInteractionListener
-import com.prt2121.everywhere.model.Group
+import com.prt2121.everywhere.meetup.model.Group
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -29,12 +29,12 @@ class GroupRecyclerViewAdapter(private val groups: MutableList<Group>, private v
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    holder.mItem = groups[position]
-    holder.mIdView.text = groups[position].name
-    holder.mContentView.text = groups[position].city
+    holder.item = groups[position]
+    holder.idView.text = groups[position].name
+    holder.contentView.text = groups[position].city
 
-    holder.mView.setOnClickListener {
-      listener?.onListFragmentInteraction(holder.mItem!!)
+    holder.view.setOnClickListener {
+      listener?.onListFragmentInteraction(holder.item!!)
     }
   }
 
@@ -42,18 +42,18 @@ class GroupRecyclerViewAdapter(private val groups: MutableList<Group>, private v
     return groups.size
   }
 
-  inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-    val mIdView: TextView
-    val mContentView: TextView
-    var mItem: Group? = null
+  inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    val idView: TextView
+    val contentView: TextView
+    var item: Group? = null
 
     init {
-      mIdView = mView.findViewById(R.id.id) as TextView
-      mContentView = mView.findViewById(R.id.content) as TextView
+      idView = view.findViewById(R.id.id) as TextView
+      contentView = view.findViewById(R.id.content) as TextView
     }
 
     override fun toString(): String {
-      return super.toString() + " '" + mContentView.text + "'"
+      return super.toString() + " '" + contentView.text + "'"
     }
   }
 }

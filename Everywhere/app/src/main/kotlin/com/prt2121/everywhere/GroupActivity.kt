@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.Toolbar
-import com.prt2121.everywhere.model.Group
+import com.prt2121.everywhere.meetup.model.Group
 
 /**
  * Created by pt2121 on 1/18/16.

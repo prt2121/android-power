@@ -1,4 +1,4 @@
-package com.prt2121.everywhere.model
+package com.prt2121.everywhere.meetup.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by pt2121 on 1/18/16.
  */
-data class GroupPhoto(
+data class Photo(
     @SerializedName("id")
     @Expose
     var id: Int,

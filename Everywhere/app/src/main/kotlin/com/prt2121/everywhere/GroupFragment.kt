@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.prt2121.everywhere.meetup.MeetupService
 import com.prt2121.everywhere.meetup.MeetupUtils
-import com.prt2121.everywhere.model.Group
+import com.prt2121.everywhere.meetup.model.Group
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers
  * interface.
  */
 class GroupFragment : Fragment() {
-  private var mListener: OnListFragmentInteractionListener? = null
+  private var listener: OnListFragmentInteractionListener? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,7 +41,7 @@ class GroupFragment : Fragment() {
 
     if (view is RecyclerView) {
       view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
-      view.adapter = GroupRecyclerViewAdapter(arrayListOf(), mListener)
+      view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
 
       val token = TokenStorage(activity).retrieve()
       val service = MeetupUtils.meetupService()
@@ -63,7 +63,7 @@ class GroupFragment : Fragment() {
   override fun onAttach(context: Context?) {
     super.onAttach(context)
     if (context is OnListFragmentInteractionListener) {
-      mListener = context as OnListFragmentInteractionListener?
+      listener = context as OnListFragmentInteractionListener?
     } else {
       throw RuntimeException(context!!.toString() + " must implement OnListFragmentInteractionListener")
     }
@@ -71,7 +71,7 @@ class GroupFragment : Fragment() {
 
   override fun onDetach() {
     super.onDetach()
-    mListener = null
+    listener = null
   }
 
   interface OnListFragmentInteractionListener {

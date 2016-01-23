@@ -1,21 +1,22 @@
-package com.prt2121.everywhere.model
+package com.prt2121.everywhere.meetup.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+
 /**
  * Created by pt2121 on 1/18/16.
  */
-data class Category(
+data class Organizer(
     @SerializedName("id")
     @Expose
     var id: Int,
     @SerializedName("name")
     @Expose
     var name: String,
-    @SerializedName("shortname")
+    @SerializedName("bio")
     @Expose
-    var shortname: String,
-    @SerializedName("sort_name")
+    var bio: String,
+    @SerializedName("photo")
     @Expose
-    var sortName: String
+    var photo: Photo
 )

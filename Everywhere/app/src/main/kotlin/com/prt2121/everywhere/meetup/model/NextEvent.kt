@@ -1,4 +1,4 @@
-package com.prt2121.everywhere.model
+package com.prt2121.everywhere.meetup.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

@@ -1,6 +1,6 @@
 package com.prt2121.everywhere.meetup
 
-import com.prt2121.everywhere.model.Group
+import com.prt2121.everywhere.meetup.model.Group
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
