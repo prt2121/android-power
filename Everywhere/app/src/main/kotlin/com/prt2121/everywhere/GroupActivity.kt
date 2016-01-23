@@ -11,7 +11,7 @@ import com.prt2121.everywhere.model.Group
  */
 class GroupActivity : BaseActivity(), GroupFragment.OnListFragmentInteractionListener {
   override fun onListFragmentInteraction(group: Group) {
-    println("onListFragmentInteraction ${group.id}")
+    println("group.id ${group.id}")
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.prt2121.everywhere
+package com.prt2121.everywhere.meetup
 
 import com.prt2121.everywhere.model.Group
 import retrofit2.http.GET

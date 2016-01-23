@@ -9,6 +9,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.prt2121.everywhere.meetup.MeetupService
+import com.prt2121.everywhere.meetup.MeetupUtils
 import com.prt2121.everywhere.model.Group
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -41,20 +43,8 @@ class GroupFragment : Fragment() {
       view.layoutManager = StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL)
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), mListener)
 
-      val token = Observable.just(TokenStorage(activity).retrieve())
-      val logging = HttpLoggingInterceptor()
-      logging.setLevel(Level.BODY)
-      val client = OkHttpClient.Builder()
-          .addInterceptor(logging)
-          .build()
-
-      val retrofit = Retrofit.Builder()
-          .baseUrl("https://api.meetup.com")
-          .client(client)
-          .addConverterFactory(GsonConverterFactory.create())
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-          .build()
-      val service = retrofit.create(MeetupService::class.java)
+      val token = TokenStorage(activity).retrieve()
+      val service = MeetupUtils.meetupService()
       token.flatMap { service.groups("Bearer $it", "10003", "1", "25") }
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
@@ -84,22 +74,12 @@ class GroupFragment : Fragment() {
     mListener = null
   }
 
-  /**
-   * This interface must be implemented by activities that contain this
-   * fragment to allow an interaction in this fragment to be communicated
-   * to the activity and potentially other fragments contained in that
-   * activity.
-   *
-   *
-   * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
-   */
   interface OnListFragmentInteractionListener {
     fun onListFragmentInteraction(group: Group)
   }
 
   companion object {
-
-    @SuppressWarnings("unused") fun newInstance(): GroupFragment {
+    fun newInstance(): GroupFragment {
       return GroupFragment()
     }
   }

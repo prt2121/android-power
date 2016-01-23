@@ -2,6 +2,7 @@ package com.prt2121.everywhere
 
 import android.content.Context
 import android.preference.PreferenceManager
+import rx.Observable
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -16,7 +17,7 @@ class TokenStorage(val context: Context) : ITokenStorage {
     editor.commit()
   }
 
-  override fun retrieve(): String? {
-    return sharedPref.getString(s, "")
+  override fun retrieve(): Observable<String> {
+    return Observable.just(sharedPref.getString(s, ""))
   }
 }
