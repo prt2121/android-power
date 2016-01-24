@@ -38,9 +38,9 @@ class GroupFragment : Fragment() {
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
       subscription = MeetupUtils.groupsByLatLng(TokenStorage(activity).retrieve(), UserLocation(activity).lastBestLocation())
           .subscribe(
-              view.adapter as GroupRecyclerViewAdapter
-              , Action1<kotlin.Throwable> { println(it.message) }
-              , Action0 { println("completed") }
+              { (view.adapter as GroupRecyclerViewAdapter).call(it) }
+              , { println(it.message) }
+              , { println("completed") }
           )
     }
     return view
