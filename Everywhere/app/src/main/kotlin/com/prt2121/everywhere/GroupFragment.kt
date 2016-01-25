@@ -13,8 +13,6 @@ import com.prt2121.everywhere.meetup.MeetupUtils
 import com.prt2121.everywhere.meetup.model.Group
 import com.prt2121.summon.location.UserLocation
 import rx.Subscription
-import rx.functions.Action0
-import rx.functions.Action1
 
 /**
  * Created by pt2121 on 1/18/16.
@@ -38,7 +36,7 @@ class GroupFragment : Fragment() {
       view.adapter = GroupRecyclerViewAdapter(arrayListOf(), listener)
       subscription = MeetupUtils.groupsByLatLng(TokenStorage(activity).retrieve(), UserLocation(activity).lastBestLocation())
           .subscribe(
-              { (view.adapter as GroupRecyclerViewAdapter).call(it) }
+              view.adapter as GroupRecyclerViewAdapter
               , { println(it.message) }
               , { println("completed") }
           )

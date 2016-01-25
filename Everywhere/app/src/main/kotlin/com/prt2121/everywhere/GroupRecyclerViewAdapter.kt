@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.prt2121.everywhere.GroupFragment.OnListFragmentInteractionListener
 import com.prt2121.everywhere.meetup.model.Group
-import rx.functions.Action1
 import java.util.*
 
 /**
@@ -18,11 +17,11 @@ import java.util.*
  */
 class GroupRecyclerViewAdapter(private val groups: MutableList<Group>,
                                private val listener: OnListFragmentInteractionListener?) :
-    RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>(), Action1<ArrayList<Group>> {
+    RecyclerView.Adapter<GroupRecyclerViewAdapter.ViewHolder>(), Function1<ArrayList<Group>, Unit> {
 
-  override fun call(groups: ArrayList<Group>) {
+  override fun invoke(p1: ArrayList<Group>) {
     this.groups.clear()
-    this.groups.addAll(groups)
+    this.groups.addAll(p1)
     notifyDataSetChanged()
   }
 
