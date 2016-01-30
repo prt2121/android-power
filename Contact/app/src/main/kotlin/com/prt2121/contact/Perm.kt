@@ -3,8 +3,6 @@ package com.prt2121.contact
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import com.prt2121.contact.PermissionResult.*
-import rx.Observable
-import rx.Subscriber
 import rx.subjects.PublishSubject
 
 /**
@@ -48,10 +46,4 @@ data class PermissionEvent(val permission: String, val result: PermissionResult)
 
 enum class PermissionResult {
   GRANTED, SHOW_RATIONALE, NEVER_ASK_AGAIN
-}
-
-class PermissionEventsOnSubscribe : Observable.OnSubscribe<PermissionResult> {
-  override fun call(t: Subscriber<in PermissionResult>?) {
-    throw UnsupportedOperationException()
-  }
 }

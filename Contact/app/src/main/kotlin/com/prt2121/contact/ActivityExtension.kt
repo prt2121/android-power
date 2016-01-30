@@ -15,17 +15,17 @@ import rx.Observable
 val AppCompatActivity.rootView: View
   get() = (findViewById(android.R.id.content) as ViewGroup).getChildAt(0)
 
-fun AppCompatActivity.requestPermissionEvents(permission: String): Observable<PermissionEvent> {
-  if (ContextCompat.checkSelfPermission(this, permission) !== PackageManager.PERMISSION_GRANTED) {
-    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-      Perm.subject.onNext(PermissionEvent(permission, SHOW_RATIONALE))
-    } else {
-      requestPermission(permission)
-    }
-  }
+fun AppCompatActivity.requestPermissionEvents(vararg ps: String): Observable<PermissionEvent> {
+  val granted = ps.filter { ContextCompat.checkSelfPermission(this, it) !== PackageManager.PERMISSION_GRANTED }
+
+  val ls = granted.partition { ActivityCompat.shouldShowRequestPermissionRationale(this, it) }
+
+  ls.first.forEach { Perm.subject.onNext(PermissionEvent(it, SHOW_RATIONALE)) }
+  if (ls.second.isNotEmpty()) askPermission(*ls.second.toTypedArray())
+
   return Perm.subject
 }
 
-fun AppCompatActivity.requestPermission(permission: String) {
-  ActivityCompat.requestPermissions(this, arrayOf(permission), Perm.CODE)
+fun AppCompatActivity.askPermission(vararg permissions: String) {
+  ActivityCompat.requestPermissions(this, permissions, Perm.CODE)
 }

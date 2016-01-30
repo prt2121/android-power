@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
               button.isClickable = true
             }
             SHOW_RATIONALE -> {
-              Snackbar.make(rootView, "Please", Snackbar.LENGTH_INDEFINITE).setAction("OK", { requestPermission(READ_CONTACTS) }).show()
+              Snackbar.make(rootView, "Please", Snackbar.LENGTH_INDEFINITE).setAction("OK", { askPermission(READ_CONTACTS) }).show()
               button.isEnabled = false
               button.isClickable = false
             }
@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         }
   }
 
-  // https://www.sinch.com/tutorials/android-contact-picker-tutorial/
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
