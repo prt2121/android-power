@@ -1,13 +1,18 @@
 package com.prt2121.contact
 
 import android.content.pm.PackageManager
-import java.util.concurrent.ConcurrentLinkedQueue
+import android.support.v7.app.AppCompatActivity
+import com.prt2121.contact.PermissionResult.*
+import rx.Observable
+import rx.Subscriber
+import rx.subjects.PublishSubject
 
 /**
  * Created by pt2121 on 1/29/16.
  */
 object Perm {
-  var appPermissions = ConcurrentLinkedQueue<String>()
+  val CODE = 123
+  val subject: PublishSubject<PermissionEvent> = PublishSubject.create()
 
   fun verifyPermissions(grantResults: IntArray): Boolean {
     // At least one result must be checked.
@@ -16,5 +21,37 @@ object Perm {
     }
     // Verify that each required permission has been granted, otherwise return false.
     return grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+  }
+
+  fun onResult(activity: AppCompatActivity, requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
+    if (requestCode == CODE) {
+      val permissionEvents = permissions.zip(grantResults.toTypedArray()) { p, r ->
+        val type = if (Perm.verifyPermissions(grantResults)) GRANTED
+        else {
+          if (activity.shouldShowRequestPermissionRationale(p)) SHOW_RATIONALE
+          else NEVER_ASK_AGAIN
+        }
+        PermissionEvent(p, type)
+      }
+
+      permissionEvents.forEach {
+        subject.onNext(it)
+      }
+      return true
+    } else {
+      return false
+    }
+  }
+}
+
+data class PermissionEvent(val permission: String, val result: PermissionResult)
+
+enum class PermissionResult {
+  GRANTED, SHOW_RATIONALE, NEVER_ASK_AGAIN
+}
+
+class PermissionEventsOnSubscribe : Observable.OnSubscribe<PermissionResult> {
+  override fun call(t: Subscriber<in PermissionResult>?) {
+    throw UnsupportedOperationException()
   }
 }
