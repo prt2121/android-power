@@ -1,16 +1,19 @@
-package com.prt2121.contact
+package com.prt2121.perm
 
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
-import com.prt2121.contact.PermissionResult.*
-import rx.subjects.PublishSubject
+import com.prt2121.perm.PermissionResult.*
+import kotlin.all
+import kotlin.forEach
+import kotlin.toTypedArray
+import kotlin.zip
 
 /**
  * Created by pt2121 on 1/29/16.
  */
 object Perm {
   val CODE = 123
-  val subject: PublishSubject<PermissionEvent> = PublishSubject.create()
+  val subject: rx.subjects.PublishSubject<PermissionEvent> = rx.subjects.PublishSubject.create()
 
   fun verifyPermissions(grantResults: IntArray): Boolean {
     // At least one result must be checked.

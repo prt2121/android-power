@@ -1,22 +1,27 @@
-package com.prt2121.contact
+package com.prt2121.perm
 
+import android.R
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
-import com.prt2121.contact.PermissionResult.SHOW_RATIONALE
-import rx.Observable
+import com.prt2121.perm.PermissionResult.SHOW_RATIONALE
+import kotlin.filter
+import kotlin.forEach
+import kotlin.isNotEmpty
+import kotlin.partition
+import kotlin.toTypedArray
 
 /**
  * Created by pt2121 on 1/29/16.
  */
 val AppCompatActivity.rootView: View
-  get() = (findViewById(android.R.id.content) as ViewGroup).getChildAt(0)
+  get() = (findViewById(R.id.content) as ViewGroup).getChildAt(0)
 
-fun AppCompatActivity.requestPermissionEvents(vararg ps: String): Observable<PermissionEvent> {
-  val granted = ps.filter { ContextCompat.checkSelfPermission(this, it) !== PackageManager.PERMISSION_GRANTED }
+fun AppCompatActivity.requestPermissionEvents(vararg ps: String): rx.Observable<PermissionEvent> {
+  val granted = ps.filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
 
   val ls = granted.partition { ActivityCompat.shouldShowRequestPermissionRationale(this, it) }
 

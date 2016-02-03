@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
 import butterknife.bindView
-import com.prt2121.contact.PermissionResult.*
 import com.prt2121.contact.Utils.findContact
+import com.prt2121.perm.PermissionResult.*
+import com.prt2121.perm.askPermission
+import com.prt2121.perm.requestPermissionEvents
+import com.prt2121.perm.rootView
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -29,43 +32,43 @@ class MainActivity : AppCompatActivity() {
       val i = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
       startActivityForResult(i, CONTACT_PICKER)
     }
-    requestPermissionEvents(READ_CONTACTS)
-        .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-          println(it)
-          when (it.result) {
-            GRANTED -> {
-              Snackbar.make(rootView, "Yeah...", Snackbar.LENGTH_LONG).show()
-              button.isEnabled = true
-              button.isClickable = true
-            }
-            SHOW_RATIONALE -> {
-              Snackbar.make(rootView, "Please", Snackbar.LENGTH_INDEFINITE).setAction("OK", { askPermission(READ_CONTACTS) }).show()
-              button.isEnabled = false
-              button.isClickable = false
-            }
-            NEVER_ASK_AGAIN -> {
-              Snackbar.make(rootView, "Noooo...", Snackbar.LENGTH_LONG).show()
-              button.isEnabled = false
-              button.isClickable = false
-            }
-          }
-        }
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
       CONTACT_PICKER -> {
-        findContact(this, contentResolver, resultCode, data)
-            .forEach { textView.text = it.toString() }
+        requestPermissionEvents(READ_CONTACTS)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+              println(it)
+              when (it.result) {
+                GRANTED -> {
+                  findContact(this, contentResolver, resultCode, data)
+                      .forEach { textView.text = it.toString() }
+                }
+                SHOW_RATIONALE -> {
+                  Snackbar.make(rootView,
+                      resources.getString(R.string.permission_contacts_rationale),
+                      Snackbar.LENGTH_INDEFINITE)
+                      .setAction("OK", { askPermission(READ_CONTACTS) })
+                      .show()
+                }
+                NEVER_ASK_AGAIN -> {
+                  Snackbar.make(rootView,
+                      resources.getString(R.string.permission_contacts_not_granted),
+                      Snackbar.LENGTH_LONG)
+                      .show()
+                }
+              }
+            }
       }
     }
   }
 
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-    if (!Perm.onResult(this, requestCode, permissions, grantResults)) {
+    if (!com.prt2121.perm.Perm.onResult(this, requestCode, permissions, grantResults)) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
   }
