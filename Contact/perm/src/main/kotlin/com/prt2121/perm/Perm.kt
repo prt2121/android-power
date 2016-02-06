@@ -3,10 +3,6 @@ package com.prt2121.perm
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import com.prt2121.perm.PermissionResult.*
-import kotlin.all
-import kotlin.forEach
-import kotlin.toTypedArray
-import kotlin.zip
 
 /**
  * Created by pt2121 on 1/29/16.

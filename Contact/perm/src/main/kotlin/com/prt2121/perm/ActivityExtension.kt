@@ -8,11 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import com.prt2121.perm.PermissionResult.SHOW_RATIONALE
-import kotlin.filter
-import kotlin.forEach
-import kotlin.isNotEmpty
-import kotlin.partition
-import kotlin.toTypedArray
 
 /**
  * Created by pt2121 on 1/29/16.
