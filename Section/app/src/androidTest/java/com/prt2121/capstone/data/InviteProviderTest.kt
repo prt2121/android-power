@@ -22,8 +22,6 @@ class InviteProviderTest : AndroidTestCase() {
   fun testProviderRegistry() {
     val pm = mContext.packageManager
 
-    // We define the component name based on the package name from the context and the
-    // WeatherProvider class.
     val componentName = ComponentName(mContext.packageName, InviteProvider::class.java.name)
     try {
       // Fetch the provider info using the component name from the PackageManager
@@ -59,7 +57,6 @@ class InviteProviderTest : AndroidTestCase() {
     val johnId = insertUserValues(mContext, john)
     val janeId = insertUserValues(mContext, jane)
 
-    // Fantastic.  Now that we have a location, add some weather!
     val values = createInviteValues(johnId, janeId)
 
     val rowId = db.insert(InviteEntry.TABLE_NAME, null, values)
@@ -76,7 +73,7 @@ class InviteProviderTest : AndroidTestCase() {
         null)
 
     // Make sure we get the correct cursor out of the database
-    validateCursor("testBasicWeatherQuery", cursor, values)
+    validateCursor("testBasicQuery", cursor, values)
   }
 
   fun validateCursor(error: String, valueCursor: Cursor, expectedValues: ContentValues) {
@@ -118,13 +115,12 @@ class InviteProviderTest : AndroidTestCase() {
     val dbHelper = InviteDbHelper(context)
     val db = dbHelper.writableDatabase
 
-    val locationRowId: Long
-    locationRowId = db.insert(UserEntry.TABLE_NAME, null, values)
+    val id = db.insert(UserEntry.TABLE_NAME, null, values)
 
     // Verify we got a row back.
-    Assert.assertTrue("Error: Failure to insert North Pole Location Values", locationRowId > -1)
+    Assert.assertTrue("Error: Failure to insert User Values", id > -1)
 
-    return locationRowId
+    return id
   }
 
   fun createJohn(): ContentValues {
