@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">Section</string>
+  <string name="content_authority">com.prt2121.capstone</string>
 </resources>

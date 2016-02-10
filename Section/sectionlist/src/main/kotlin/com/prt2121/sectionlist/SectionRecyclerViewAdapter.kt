@@ -76,7 +76,7 @@ class SectionRecyclerViewAdapter<T : RecyclerView.ViewHolder>(val context: Conte
 
   private fun isSectionHeaderPosition(position: Int): Boolean = sections[position] != null
 
-  fun setSections(sectionArray: Array<Section>) {
+  fun update(sectionArray: Array<Section>) {
     sections.clear()
     sectionArray.sortedArrayWith(Comparator<Section> { o, o1 ->
       if ((o.firstPosition === o1.firstPosition)) 0

@@ -1,4 +1,4 @@
-package com.prt2121.section
+package com.prt2121.capstone
 
 import android.graphics.*
 import com.squareup.picasso.Transformation
