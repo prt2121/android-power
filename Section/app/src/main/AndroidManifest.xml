@@ -13,19 +13,39 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
       >
-    <activity android:name="com.prt2121.capstone.ListActivity">
+    <activity android:name=".ListActivity">
+
+    </activity>
+
+    <provider
+        android:name=".data.InviteProvider"
+        android:authorities="@string/content_authority"
+        android:exported="false"
+        android:syncable="true"
+        />
+
+    <activity
+        android:name=".InviteListActivity"
+        android:label="@string/title_invite_list"
+        android:theme="@style/AppTheme.NoActionBar"
+        >
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-
-    <provider
-        android:authorities="@string/content_authority"
-        android:name=".data.InviteProvider"
-        android:exported="false"
-        android:syncable="true" />
+    <activity
+        android:name=".InviteDetailActivity"
+        android:label="@string/title_invite_detail"
+        android:parentActivityName=".InviteListActivity"
+        android:theme="@style/AppTheme.NoActionBar"
+        >
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="com.prt2121.capstone.InviteListActivity"
+          />
+    </activity>
   </application>
 
 </manifest>

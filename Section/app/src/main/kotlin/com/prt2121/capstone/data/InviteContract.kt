@@ -7,6 +7,7 @@ import android.provider.BaseColumns
 import com.prt2121.capstone.data.InviteContract.BASE_CONTENT_URI
 import com.prt2121.capstone.data.InviteContract.CONTENT_AUTHORITY
 import com.prt2121.capstone.data.InviteContract.PATH_INVITE
+import com.prt2121.capstone.data.InviteContract.PATH_INVITE_FROM_ME
 import com.prt2121.capstone.data.InviteContract.PATH_USER
 
 /**
@@ -18,10 +19,12 @@ object InviteContract {
   const val CONTENT_AUTHORITY = "com.prt2121.capstone"
   val BASE_CONTENT_URI = Uri.parse("content://$CONTENT_AUTHORITY")
   const val PATH_INVITE = "invite"
+  const val PATH_INVITE_FROM_ME = "me" // query only
   const val PATH_USER = "user"
 }
 
 object InviteEntry : BaseColumns {
+  val QUERY_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INVITE_FROM_ME).build()
   val CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INVITE).build()
   const val CONTENT_TYPE =
       ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INVITE
@@ -43,8 +46,6 @@ object InviteEntry : BaseColumns {
   const val COLUMN_CREATE_AT = "create_at"
 
   fun buildUri(id: Long): Uri = ContentUris.withAppendedId(CONTENT_URI, id)
-
-  fun buildUriWithFrom(from: String): Uri = CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_FROM_ID, from).build()
 }
 
 object UserEntry : BaseColumns {

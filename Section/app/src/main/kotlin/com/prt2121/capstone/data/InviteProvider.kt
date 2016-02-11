@@ -19,6 +19,7 @@ import org.funktionale.option.toOption
 class InviteProvider : ContentProvider() {
 
   private val INVITE = 100
+  private val INVITE_ME = 110
   private val USER = 200
 
   private val uriMatcher = buildUriMatcher()
@@ -26,15 +27,19 @@ class InviteProvider : ContentProvider() {
   private val queryBuilder = SQLiteQueryBuilder()
 
   init {
-    queryBuilder.tables = InviteEntry.TABLE_NAME + " INNER JOIN " +
-        UserEntry.TABLE_NAME +
-        " ON " + InviteEntry.TABLE_NAME +
-        "." + InviteEntry.COLUMN_TO_ID +
-        " = " + InviteEntry.TABLE_NAME +
-        "." + BaseColumns._ID
+    // invite
+    // inner join user u1
+    // on invite.to_id = u1._id
+    // inner join user u2
+    // on invite.to_id = u2._id
+    queryBuilder.tables = InviteEntry.TABLE_NAME +
+        " INNER JOIN " + UserEntry.TABLE_NAME + " u1 " +
+        " ON " + InviteEntry.TABLE_NAME + "." + InviteEntry.COLUMN_TO_ID + " = u1." + BaseColumns._ID +
+        " INNER JOIN " + UserEntry.TABLE_NAME + " u2 " +
+        " ON " + InviteEntry.TABLE_NAME + "." + InviteEntry.COLUMN_FROM_ID + " = u2." + BaseColumns._ID
   }
 
-  private fun getInvites(projection: Array<String>, sortOrder: String): Option<Cursor> =
+  fun getInvites(projection: Array<String>?, sortOrder: String?): Option<Cursor> =
       dbHelper.toOption().map {
         queryBuilder.query(dbHelper?.readableDatabase,
             projection,
@@ -72,6 +77,9 @@ class InviteProvider : ContentProvider() {
           null,
           null,
           sortOrder)
+
+      INVITE_ME -> getInvites(projection, sortOrder).orNull()
+
       USER -> dbHelper?.readableDatabase?.query(
           UserEntry.TABLE_NAME,
           projection,
@@ -94,6 +102,7 @@ class InviteProvider : ContentProvider() {
   override fun getType(uri: Uri?): String? =
       when (uriMatcher.match(uri)) {
         INVITE -> InviteEntry.CONTENT_TYPE
+        INVITE_ME -> InviteEntry.CONTENT_TYPE
         USER -> UserEntry.CONTENT_TYPE
         else -> throw UnsupportedOperationException("Unknown uri: " + uri)
       }
@@ -175,6 +184,7 @@ class InviteProvider : ContentProvider() {
     val matcher = UriMatcher(UriMatcher.NO_MATCH)
     val authority = InviteContract.CONTENT_AUTHORITY
     matcher.addURI(authority, InviteContract.PATH_INVITE, INVITE)
+    matcher.addURI(authority, InviteContract.PATH_INVITE_FROM_ME, INVITE_ME)
     matcher.addURI(authority, InviteContract.PATH_USER, USER)
     return matcher
   }
