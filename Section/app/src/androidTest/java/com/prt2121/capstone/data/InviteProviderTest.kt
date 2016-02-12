@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.test.AndroidTestCase
+import android.util.Log
 import junit.framework.Assert
 
 /**
@@ -74,6 +75,29 @@ class InviteProviderTest : AndroidTestCase() {
 
     // Make sure we get the correct cursor out of the database
     validateCursor("testBasicQuery", cursor, values)
+  }
+
+  fun testUserExist() {
+    val dbHelper = InviteDbHelper(mContext)
+    val db = dbHelper.writableDatabase
+
+    val john = createJohn()
+    val jane = createJane()
+
+    val johnId = insertUserValues(mContext, john)
+    val janeId = insertUserValues(mContext, jane)
+
+    val values = createInviteValues(johnId, janeId)
+
+    val rowId = db.insert(InviteEntry.TABLE_NAME, null, values)
+    Assert.assertTrue("Unable to Insert InviteEntry into the Database", rowId > -1)
+
+    db.close()
+
+    val selection = UserEntry.COLUMN_PHONE_NUMBER + " = ? "
+    val cursor = mContext.contentResolver.query(UserEntry.CONTENT_URI, null, selection, arrayOf("9086447097"), null)
+    Log.d(InviteProviderTest::class.java.simpleName, "cursor count ${cursor.count}")
+    Assert.assertEquals(1, cursor.count)
   }
 
   fun validateCursor(error: String, valueCursor: Cursor, expectedValues: ContentValues) {

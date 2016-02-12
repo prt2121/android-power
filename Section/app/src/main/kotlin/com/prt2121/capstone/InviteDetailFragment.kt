@@ -54,7 +54,7 @@ class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
   override fun onLoadFinished(p0: Loader<Cursor>?, data: Cursor?) {
     if (data != null && data.moveToFirst()) {
       val invite = InviteProvider.inviteFromCursor(data)
-      detailTextView.text = invite._id
+      detailTextView.text = invite.id
     }
   }
 

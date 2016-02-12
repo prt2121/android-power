@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers
  */
 class ListActivity : AppCompatActivity(), InviteAdapter.ClickListener {
   override fun onItemViewClick(view: View, invite: Invite) {
-    println("invite._id clicked ${invite._id}")
+    println("invite._id clicked ${invite.id}")
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -11,7 +11,7 @@ import java.util.*
 data class Invite(
 
     @SerializedName("id") @Expose
-    val _id: String? = null,
+    val id: String? = null,
 
     @SerializedName("from") @Expose
     val from: User,

@@ -15,6 +15,7 @@ import butterknife.bindView
 import com.invite.Invite
 import com.prt2121.capstone.data.InviteEntry
 import com.prt2121.capstone.data.InviteProvider
+import com.prt2121.capstone.sync.InviteSyncAdapter
 import com.prt2121.sectionlist.SectionRecyclerViewAdapter
 
 /**
@@ -32,8 +33,8 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
   private val sectionAdapter by lazy { SectionRecyclerViewAdapter(this, R.layout.section, R.id.section_text, baseAdapter) }
 
   override fun onItemViewClick(view: View, invite: Invite) {
-    println("invite._id clicked ${invite._id}")
-    val uri = InviteEntry.buildUri(invite._id!!.toLong())
+    println("invite._id clicked ${invite.id}")
+    val uri = InviteEntry.buildUri(invite.id!!.toLong())
     if (mTwoPane) {
       val arguments = Bundle()
       arguments.putParcelable(InviteDetailFragment.ARG_INVITE_URI, uri)
@@ -67,6 +68,8 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
       mTwoPane = true
     }
     supportLoaderManager.initLoader<Cursor>(0, null, this)
+
+    InviteSyncAdapter.initializeSyncAdapter(this)
   }
 
   private fun setupRecyclerView(listView: RecyclerView) {
@@ -74,23 +77,6 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
     val sections = emptyArray<SectionRecyclerViewAdapter.Section>()
     sectionAdapter.update(sections)
     listView.adapter = sectionAdapter
-
-    // TODO: remove
-    //    InviteApi.instance.getInvitesFrom("6466445321")
-    //        .map { it.sortedByDescending { it.createAt } }
-    //        .subscribeOn(Schedulers.newThread())
-    //        .observeOn(AndroidSchedulers.mainThread())
-    //        .subscribe(
-    //            {
-    //              baseAdapter.update(it)
-    //              val active = it.filter { it.isActive() }.size
-    //              sectionAdapter.update(
-    //                  arrayOf(SectionRecyclerViewAdapter.Section(0, "Active"), SectionRecyclerViewAdapter.Section(active, "Archive"))
-    //              )
-    //            },
-    //            { println("${it.message}") },
-    //            { println("completed") }
-    //        )
   }
 
   override fun onLoadFinished(loader: Loader<Cursor>?, cursor: Cursor?) {

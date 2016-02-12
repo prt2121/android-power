@@ -3,6 +3,7 @@ package com.prt2121.capstone.data
 import android.annotation.TargetApi
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.Context
 import android.content.UriMatcher
 import android.database.Cursor
 import android.database.SQLException
@@ -211,6 +212,14 @@ class InviteProvider : ContentProvider() {
   }
 
   companion object {
+    fun userExists(context: Context, phoneNumber: String): Boolean
+        = context.contentResolver.query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null).count > 0
+
+    fun queryUserId(context: Context, phoneNumber: String): Option<String> {
+      val cursor = context.contentResolver.query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null)
+      return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_PHONE_NUMBER)).toOption() else Option.None
+    }
+
     fun inviteFromCursor(cursor: Cursor): Invite {
       val statusStr = cursor.getString(cursor.getColumnIndex(InviteEntry.COLUMN_STATUS))
       val status = when (statusStr) {
