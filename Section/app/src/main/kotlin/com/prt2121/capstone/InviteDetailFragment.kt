@@ -3,8 +3,6 @@ package com.prt2121.capstone
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.provider.BaseColumns
-import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
@@ -14,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.bindView
-import com.prt2121.capstone.data.InviteEntry
+import com.prt2121.capstone.data.InviteProvider
 import org.funktionale.option.Option
 import org.funktionale.option.Option.None
 import org.funktionale.option.toOption
@@ -55,11 +53,8 @@ class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
 
   override fun onLoadFinished(p0: Loader<Cursor>?, data: Cursor?) {
     if (data != null && data.moveToFirst()) {
-      val id = data.getString(0) // _id
-      val address = data.getString(data.getColumnIndex(InviteEntry.COLUMN_DESTINATION_ADDRESS))
-      val message = data.getString(data.getColumnIndex(InviteEntry.COLUMN_MESSAGE))
-      println("id $id address $address message $message")
-      detailTextView.text = id
+      val invite = InviteProvider.inviteFromCursor(data)
+      detailTextView.text = invite._id
     }
   }
 
