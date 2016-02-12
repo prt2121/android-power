@@ -3,6 +3,7 @@ package com.prt2121.capstone
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.provider.BaseColumns
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.LoaderManager
@@ -25,17 +26,14 @@ import org.funktionale.option.toOption
  * on handsets.
  */
 class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private var uri: Option<Uri> = None
-
-  private val appBarLayout: CollapsingToolbarLayout  by bindView(R.id.toolbar_layout)
   private val detailTextView: TextView  by bindView(R.id.invite_detail)
+  private val uri: Option<Uri> by lazy {
+    if (arguments.containsKey(ARG_INVITE_URI)) arguments.getParcelable<Uri>(InviteDetailFragment.ARG_INVITE_URI).toOption()
+    else None
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    if (arguments.containsKey(ARG_INVITE_URI)) {
-      uri = arguments.getParcelable<Uri>(InviteDetailFragment.ARG_INVITE_URI).toOption()
-    }
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -52,12 +50,16 @@ class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
         CursorLoader(activity, it, null, null, null, null)
       }.orNull()
 
-  override fun onLoaderReset(p0: Loader<Cursor>?) {}
+  override fun onLoaderReset(p0: Loader<Cursor>?) {
+  }
 
   override fun onLoadFinished(p0: Loader<Cursor>?, data: Cursor?) {
     if (data != null && data.moveToFirst()) {
-      appBarLayout.title = data.getString(data.getColumnIndex(InviteEntry.COLUMN_DESTINATION_ADDRESS))
-      detailTextView.text = data.getString(data.getColumnIndex(InviteEntry.COLUMN_MESSAGE))
+      val id = data.getString(0) // _id
+      val address = data.getString(data.getColumnIndex(InviteEntry.COLUMN_DESTINATION_ADDRESS))
+      val message = data.getString(data.getColumnIndex(InviteEntry.COLUMN_MESSAGE))
+      println("id $id address $address message $message")
+      detailTextView.text = id
     }
   }
 

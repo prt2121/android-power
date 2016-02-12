@@ -43,7 +43,7 @@ class InviteDetailActivity : AppCompatActivity() {
       // Create the detail fragment and add it to the activity
       // using a fragment transaction.
       val arguments = Bundle()
-      arguments.putString(InviteDetailFragment.ARG_INVITE_URI, intent.getStringExtra(InviteDetailFragment.ARG_INVITE_URI))
+      arguments.putParcelable(InviteDetailFragment.ARG_INVITE_URI, intent.getParcelableExtra(InviteDetailFragment.ARG_INVITE_URI))
       val fragment = InviteDetailFragment()
       fragment.arguments = arguments
       supportFragmentManager.beginTransaction().add(R.id.invite_detail_container, fragment).commit()

@@ -46,6 +46,8 @@ object InviteEntry : BaseColumns {
   const val COLUMN_CREATE_AT = "create_at"
 
   fun buildUri(id: Long): Uri = ContentUris.withAppendedId(CONTENT_URI, id)
+
+  fun getInviteIdFromUri(uri: Uri): String = uri.pathSegments[1]
 }
 
 object UserEntry : BaseColumns {

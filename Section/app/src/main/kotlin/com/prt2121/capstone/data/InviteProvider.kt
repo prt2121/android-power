@@ -9,6 +9,9 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.provider.BaseColumns
+import com.invite.Invite
+import com.invite.Status
+import com.invite.User
 import org.funktionale.option.Option
 import org.funktionale.option.getOrElse
 import org.funktionale.option.toOption
@@ -20,11 +23,14 @@ class InviteProvider : ContentProvider() {
 
   private val INVITE = 100
   private val INVITE_ME = 110
+  private val INVITE_WITH_ID = 120
   private val USER = 200
 
   private val uriMatcher = buildUriMatcher()
   private var dbHelper: InviteDbHelper? = null
   private val queryBuilder = SQLiteQueryBuilder()
+
+  private val inviteSelection = InviteEntry.TABLE_NAME + "." + BaseColumns._ID + " = ? "
 
   init {
     // invite
@@ -45,6 +51,17 @@ class InviteProvider : ContentProvider() {
             projection,
             null,
             null,
+            null,
+            null,
+            sortOrder)
+      }
+
+  fun getInvite(uri: Uri, projection: Array<String>?, sortOrder: String?): Option<Cursor> =
+      dbHelper.toOption().map {
+        queryBuilder.query(dbHelper?.readableDatabase,
+            projection,
+            inviteSelection,
+            arrayOf(InviteEntry.getInviteIdFromUri(uri)),
             null,
             null,
             sortOrder)
@@ -80,6 +97,8 @@ class InviteProvider : ContentProvider() {
 
       INVITE_ME -> getInvites(projection, sortOrder).orNull()
 
+      INVITE_WITH_ID -> getInvite(uri, projection, sortOrder).orNull()
+
       USER -> dbHelper?.readableDatabase?.query(
           UserEntry.TABLE_NAME,
           projection,
@@ -103,6 +122,7 @@ class InviteProvider : ContentProvider() {
       when (uriMatcher.match(uri)) {
         INVITE -> InviteEntry.CONTENT_TYPE
         INVITE_ME -> InviteEntry.CONTENT_TYPE
+        INVITE_WITH_ID -> InviteEntry.CONTENT_ITEM_TYPE
         USER -> UserEntry.CONTENT_TYPE
         else -> throw UnsupportedOperationException("Unknown uri: " + uri)
       }
@@ -185,8 +205,63 @@ class InviteProvider : ContentProvider() {
     val authority = InviteContract.CONTENT_AUTHORITY
     matcher.addURI(authority, InviteContract.PATH_INVITE, INVITE)
     matcher.addURI(authority, InviteContract.PATH_INVITE_FROM_ME, INVITE_ME)
+    matcher.addURI(authority, InviteContract.PATH_INVITE + "/#", INVITE_WITH_ID)
     matcher.addURI(authority, InviteContract.PATH_USER, USER)
     return matcher
+  }
+
+  companion object {
+    fun inviteFromCursor(cursor: Cursor): Invite {
+      val statusStr = cursor.getString(cursor.getColumnIndex(InviteEntry.COLUMN_STATUS))
+      val status = when (statusStr) {
+        "ACCEPT" -> Status.ACCEPT
+        "PENDING" -> Status.PENDING
+        "REJECT" -> Status.REJECT
+        else -> Status.CANCEL
+      }
+      val invite = Invite(
+          cursor.getInt(QueryColumn.inviteId).toString(),
+          User(cursor.getString(QueryColumn.toFirstName),
+              cursor.getString(QueryColumn.toLastName),
+              cursor.getString(QueryColumn.toPhoneNumber),
+              cursor.getString(QueryColumn.toPhotoUri)),
+          User(cursor.getString(QueryColumn.fromFirstName),
+              cursor.getString(QueryColumn.fromLastName),
+              cursor.getString(QueryColumn.fromPhoneNumber),
+              cursor.getString(QueryColumn.fromPhotoUri)),
+          cursor.getString(QueryColumn.destLatLng),
+          cursor.getString(QueryColumn.destAddress),
+          cursor.getString(QueryColumn.message),
+          status,
+          cursor.getString(QueryColumn.pickupAddress),
+          cursor.getLong(QueryColumn.createAt)
+      )
+      return invite
+    }
+  }
+
+  object QueryColumn {
+    // query column mapping
+    const val inviteId = 0
+    const val backendId = 1
+    const val fromId = 2
+    const val toId = 3
+    const val destLatLng = 4
+    const val destAddress = 5
+    const val message = 6
+    const val status = 7
+    const val pickupAddress = 8
+    const val createAt = 9
+    const val fromUserId = 10 // same as fromId
+    const val fromFirstName = 11
+    const val fromLastName = 12
+    const val fromPhoneNumber = 13
+    const val fromPhotoUri = 14
+    const val toUserId = 15
+    const val toFirstName = 16
+    const val toLastName = 17
+    const val toPhoneNumber = 18
+    const val toPhotoUri = 19
   }
 
 }
