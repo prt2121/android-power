@@ -217,7 +217,7 @@ class InviteProvider : ContentProvider() {
 
     fun queryUserId(context: Context, phoneNumber: String): Option<String> {
       val cursor = context.contentResolver.query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null)
-      return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_PHONE_NUMBER)).toOption() else Option.None
+      return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(BaseColumns._ID)).toOption() else Option.None
     }
 
     fun inviteFromCursor(cursor: Cursor): Invite {
@@ -247,6 +247,7 @@ class InviteProvider : ContentProvider() {
       )
       return invite
     }
+
   }
 
   object QueryColumn {
@@ -273,4 +274,24 @@ class InviteProvider : ContentProvider() {
     const val toPhotoUri = 19
   }
 
+}
+
+fun Invite.toContentValues(context: Context): ContentValues {
+  val status = when (this.status) {
+    Status.ACCEPT -> "ACCEPT"
+    Status.PENDING -> "PENDING"
+    Status.REJECT -> "REJECT"
+    else -> "CANCEL"
+  }
+  val value = ContentValues()
+  value.put(InviteEntry.COLUMN_BACKEND_ID, this.id)
+  value.put(InviteEntry.COLUMN_CREATE_AT, this.createAt)
+  value.put(InviteEntry.COLUMN_DESTINATION_ADDRESS, this.destinationAddress)
+  value.put(InviteEntry.COLUMN_DESTINATION_LATLNG, this.destinationLatLng)
+  value.put(InviteEntry.COLUMN_FROM_ID, InviteProvider.queryUserId(context, this.from.phoneNumber).get())
+  value.put(InviteEntry.COLUMN_TO_ID, InviteProvider.queryUserId(context, this.to.phoneNumber).get())
+  value.put(InviteEntry.COLUMN_MESSAGE, this.message)
+  value.put(InviteEntry.COLUMN_PICKUP_ADDRESS, this.pickupAddress)
+  value.put(InviteEntry.COLUMN_STATUS, status)
+  return value
 }

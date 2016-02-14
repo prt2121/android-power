@@ -7,12 +7,12 @@ import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import com.invite.InviteApi
-import com.invite.Status
 import com.invite.User
 import com.prt2121.capstone.R
 import com.prt2121.capstone.data.InviteEntry
 import com.prt2121.capstone.data.InviteProvider
 import com.prt2121.capstone.data.UserEntry
+import com.prt2121.capstone.data.toContentValues
 import rx.Observable
 import rx.schedulers.Schedulers
 
@@ -25,11 +25,7 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
                              authority: String?,
                              provider: ContentProviderClient?,
                              syncResult: SyncResult?) {
-    // TODO: move to Utils
-    val telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-    val number = telephony.line1Number
-
-    println("number $number")
+    val number = phoneNumber(context)
 
     InviteApi.instance.getInvitesFrom(number)
         .map { it.filter { System.currentTimeMillis() - it.createAt < DAY_IN_MILLIS } }
@@ -39,25 +35,7 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
           if (!InviteProvider.userExists(context, it.from.phoneNumber)) insertUser(it.from)
           if (!InviteProvider.userExists(context, it.to.phoneNumber)) insertUser(it.to)
         }
-        .map {
-          val status = when (it.status) {
-            Status.ACCEPT -> "ACCEPT"
-            Status.PENDING -> "PENDING"
-            Status.REJECT -> "REJECT"
-            else -> "CANCEL"
-          }
-          val value = ContentValues()
-          value.put(InviteEntry.COLUMN_BACKEND_ID, it.id)
-          value.put(InviteEntry.COLUMN_CREATE_AT, it.createAt)
-          value.put(InviteEntry.COLUMN_DESTINATION_ADDRESS, it.destinationAddress)
-          value.put(InviteEntry.COLUMN_DESTINATION_LATLNG, it.destinationLatLng)
-          value.put(InviteEntry.COLUMN_FROM_ID, InviteProvider.queryUserId(context, it.from.phoneNumber).get())
-          value.put(InviteEntry.COLUMN_TO_ID, InviteProvider.queryUserId(context, it.to.phoneNumber).get())
-          value.put(InviteEntry.COLUMN_MESSAGE, it.message)
-          value.put(InviteEntry.COLUMN_PICKUP_ADDRESS, it.pickupAddress)
-          value.put(InviteEntry.COLUMN_STATUS, status)
-          value
-        }
+        .map { it.toContentValues(context) }
         .map {
           context.contentResolver.insert(InviteEntry.CONTENT_URI, it)
         }
@@ -65,18 +43,24 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
         .subscribeOn(Schedulers.io())
         .subscribe({
           println("Synced : insert count = $it")
-        }, {
-          e -> println("error ${e.message}")
+        }, { e ->
+          println("error ${e.message}")
         })
   }
 
+  // TODO: this could return null...
+  private fun phoneNumber(context: Context): String {
+    val telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+    return telephony.line1Number
+  }
+
   private fun insertUser(user: User) {
-    val fromUser = ContentValues()
-    fromUser.put(UserEntry.COLUMN_FIRST_NAME, user.firstName)
-    fromUser.put(UserEntry.COLUMN_LAST_NAME, user.lastName)
-    fromUser.put(UserEntry.COLUMN_PHONE_NUMBER, user.phoneNumber)
-    fromUser.put(UserEntry.COLUMN_PHOTO_URI, user.photoUri)
-    context.contentResolver.insert(UserEntry.CONTENT_URI, fromUser)
+    val values = ContentValues()
+    values.put(UserEntry.COLUMN_FIRST_NAME, user.firstName)
+    values.put(UserEntry.COLUMN_LAST_NAME, user.lastName)
+    values.put(UserEntry.COLUMN_PHONE_NUMBER, user.phoneNumber)
+    values.put(UserEntry.COLUMN_PHOTO_URI, user.photoUri)
+    context.contentResolver.insert(UserEntry.CONTENT_URI, values)
   }
 
   companion object {
