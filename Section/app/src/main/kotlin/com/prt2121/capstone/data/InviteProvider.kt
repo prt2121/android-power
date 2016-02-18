@@ -129,10 +129,11 @@ class InviteProvider : ContentProvider() {
       }
 
   override fun insert(uri: Uri?, values: ContentValues?): Uri? {
+    val db = dbHelper?.writableDatabase
     val returnUri =
         when (uriMatcher.match(uri)) {
           INVITE -> {
-            val id = dbHelper?.writableDatabase?.insert(
+            val id = db?.insert(
                 InviteEntry.TABLE_NAME,
                 null,
                 values) ?: -1
@@ -140,7 +141,7 @@ class InviteProvider : ContentProvider() {
             else throw SQLException("Failed to insert row into " + uri)
           }
           USER -> {
-            val id = dbHelper?.writableDatabase?.insert(
+            val id = db?.insert(
                 UserEntry.TABLE_NAME,
                 null,
                 values) ?: -1
@@ -213,7 +214,14 @@ class InviteProvider : ContentProvider() {
 
   companion object {
     fun userExists(context: Context, phoneNumber: String): Boolean
-        = context.contentResolver.query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null).count > 0
+        = context.contentResolver
+        .query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null)
+        .count > 0
+
+    fun inviteExists(context: Context, backendId: String): Boolean
+        = context.contentResolver
+        .query(InviteEntry.CONTENT_URI, null, " ${InviteEntry.COLUMN_BACKEND_ID} = ? ", arrayOf(backendId), null)
+        .count > 0
 
     fun queryUserId(context: Context, phoneNumber: String): Option<String> {
       val cursor = context.contentResolver.query(UserEntry.CONTENT_URI, null, " ${UserEntry.COLUMN_PHONE_NUMBER} = ? ", arrayOf(phoneNumber), null)

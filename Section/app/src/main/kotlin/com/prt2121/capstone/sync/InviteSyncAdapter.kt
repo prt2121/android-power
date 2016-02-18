@@ -11,7 +11,8 @@ import com.invite.User
 import com.prt2121.capstone.R
 import com.prt2121.capstone.backoff
 import com.prt2121.capstone.data.InviteEntry
-import com.prt2121.capstone.data.InviteProvider
+import com.prt2121.capstone.data.InviteProvider.Companion.inviteExists
+import com.prt2121.capstone.data.InviteProvider.Companion.userExists
 import com.prt2121.capstone.data.UserEntry
 import com.prt2121.capstone.data.toContentValues
 import rx.Observable
@@ -34,12 +35,18 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
         .map { it.sortedByDescending { it.createAt } }
         .flatMap { Observable.from(it) }
         .doOnNext {
-          if (!InviteProvider.userExists(context, it.from.phoneNumber)) insertUser(it.from)
-          if (!InviteProvider.userExists(context, it.to.phoneNumber)) insertUser(it.to)
+          if (!userExists(context, it.from.phoneNumber)) insertUser(it.from)
+          if (!userExists(context, it.to.phoneNumber)) insertUser(it.to)
         }
         .map { it.toContentValues(context) }
         .map {
-          context.contentResolver.insert(InviteEntry.CONTENT_URI, it)
+          if (inviteExists(context, it.getAsString(InviteEntry.COLUMN_BACKEND_ID))) {
+            context.contentResolver
+                .update(
+                    InviteEntry.CONTENT_URI, it,
+                    InviteEntry.COLUMN_BACKEND_ID,
+                    arrayOf(it.getAsString(InviteEntry.COLUMN_BACKEND_ID)))
+          } else context.contentResolver.insert(InviteEntry.CONTENT_URI, it)
         }
         .count()
         .compose(backoff<Int>(1, TimeUnit.SECONDS, 4))
