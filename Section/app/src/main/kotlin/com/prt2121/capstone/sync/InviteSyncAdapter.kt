@@ -9,12 +9,14 @@ import android.telephony.TelephonyManager
 import com.invite.InviteApi
 import com.invite.User
 import com.prt2121.capstone.R
+import com.prt2121.capstone.backoff
 import com.prt2121.capstone.data.InviteEntry
 import com.prt2121.capstone.data.InviteProvider
 import com.prt2121.capstone.data.UserEntry
 import com.prt2121.capstone.data.toContentValues
 import rx.Observable
 import rx.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by pt2121 on 2/12/16.
@@ -40,17 +42,20 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
           context.contentResolver.insert(InviteEntry.CONTENT_URI, it)
         }
         .count()
+        .compose(backoff<Int>(1, TimeUnit.SECONDS, 4))
         .subscribeOn(Schedulers.io())
         .subscribe({
-          println("Synced : insert count = $it")
+          println("#onPerformSync : insert count = $it")
         }, { e ->
-          println("error ${e.message}")
+          println("#onPerformSync : error ${e.message}") // error timeout
         })
   }
 
   // TODO: this could return null...
   private fun phoneNumber(context: Context): String {
     val telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+    // return "9086447097"
+    // TODO 15555215554
     return telephony.line1Number
   }
 
@@ -95,7 +100,6 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
 
       // If the password doesn't exist, the account doesn't exist
       if (null == accountManager.getPassword(newAccount)) {
-
         if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
           return null
         }
