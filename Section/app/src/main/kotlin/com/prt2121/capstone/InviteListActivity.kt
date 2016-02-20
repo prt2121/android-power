@@ -88,9 +88,12 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
       } while (cursor.moveToNext())
 
       baseAdapter.update(ls)
-      val active = ls.filter { it.isActive() }.size
+      val lastIndexOfActive = ls.filter { it.isActive() }.size
+      val activeLabel = if (lastIndexOfActive == 0) "No Active Invite" else "Active"
+      val archiveLabel = if (ls.isEmpty()) "No Archive Invite" else "Archive"
       sectionAdapter.update(
-          arrayOf(SectionRecyclerViewAdapter.Section(0, "Active"), SectionRecyclerViewAdapter.Section(active, "Archive"))
+          arrayOf(SectionRecyclerViewAdapter.Section(0, activeLabel),
+              SectionRecyclerViewAdapter.Section(lastIndexOfActive, archiveLabel))
       )
     }
   }
