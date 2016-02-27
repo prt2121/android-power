@@ -35,7 +35,7 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
   override fun onItemViewClick(view: View, invite: Invite) {
     println("invite._id clicked ${invite.id}")
     val uri = InviteEntry.buildUri(invite.id!!.toLong())
-    if (mTwoPane) {
+    if (twoPane) {
       val arguments = Bundle()
       arguments.putParcelable(InviteDetailFragment.ARG_INVITE_URI, uri)
       val fragment = InviteDetailFragment()
@@ -53,7 +53,7 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
    * Whether or not the activity is in two-pane mode, i.e. running on a tablet
    * device.
    */
-  private var mTwoPane: Boolean = false
+  private var twoPane: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -65,7 +65,7 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
     setupRecyclerView(listView)
 
     if (findViewById(R.id.invite_detail_container) != null) {
-      mTwoPane = true
+      twoPane = true
     }
     supportLoaderManager.initLoader<Cursor>(0, null, this)
 
