@@ -33,7 +33,6 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
   private val sectionAdapter by lazy { SectionRecyclerViewAdapter(this, R.layout.section, R.id.section_text, baseAdapter) }
 
   override fun onItemViewClick(view: View, invite: Invite) {
-    println("invite._id clicked ${invite.id}")
     val uri = InviteEntry.buildUri(invite.id!!.toLong())
     if (twoPane) {
       val arguments = Bundle()
@@ -45,6 +44,7 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
       println("invite uri ${uri.toString()} ${invite.from.phoneNumber}")
       val intent = Intent(this, InviteDetailActivity::class.java)
       intent.putExtra(InviteDetailFragment.ARG_INVITE_URI, uri)
+      //intent.putExtra("invite_extra", InviteParcel.)
       startActivity(intent)
     }
   }
