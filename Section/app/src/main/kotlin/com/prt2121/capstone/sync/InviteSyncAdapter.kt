@@ -60,7 +60,6 @@ class InviteSyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThr
 
   private fun phoneNumber(context: Context): String {
     val telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-    // TODO 15555215554
     return telephony.line1Number
   }
 
