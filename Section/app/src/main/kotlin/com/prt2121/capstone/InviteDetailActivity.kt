@@ -24,21 +24,10 @@ class InviteDetailActivity : AppCompatActivity() {
     val toolbar = findViewById(R.id.detail_toolbar) as Toolbar
     setSupportActionBar(toolbar)
 
-    val fab = findViewById(R.id.fab) as FloatingActionButton
-    fab.setOnClickListener { view -> Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
-
-    // Show the Up button in the action bar.
     val actionBar = supportActionBar
     actionBar?.setDisplayHomeAsUpEnabled(true)
 
-    // savedInstanceState is non-null when there is fragment state
-    // saved from previous configurations of this activity
-    // In this case, the fragment will automatically be re-added
-    // to its container so we don't need to manually add it.
-    //
     if (savedInstanceState == null) {
-      // Create the detail fragment and add it to the activity
-      // using a fragment transaction.
       val arguments = Bundle()
       arguments.putParcelable(InviteDetailFragment.ARG_INVITE_URI, intent.getParcelableExtra(InviteDetailFragment.ARG_INVITE_URI))
       val inviteParcel = intent.getParcelableExtra<InviteParcel>(InviteDetailFragment.ARG_INVITE)

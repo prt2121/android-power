@@ -26,7 +26,7 @@ import org.funktionale.option.toOption
  * on handsets.
  */
 class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private val detailTextView: TextView  by bindView(R.id.invite_detail)
+  private val detailTextView: TextView  by bindView(R.id.inviteDetail_title)
   private val uri: Option<Uri> by lazy {
     if (arguments.containsKey(ARG_INVITE_URI)) arguments.getParcelable<Uri>(InviteDetailFragment.ARG_INVITE_URI).toOption()
     else None
