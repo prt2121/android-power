@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import com.invite.InviteParcel
 
 /**
  * An activity representing a single Invite detail screen. This
@@ -40,6 +41,9 @@ class InviteDetailActivity : AppCompatActivity() {
       // using a fragment transaction.
       val arguments = Bundle()
       arguments.putParcelable(InviteDetailFragment.ARG_INVITE_URI, intent.getParcelableExtra(InviteDetailFragment.ARG_INVITE_URI))
+      val inviteParcel = intent.getParcelableExtra<InviteParcel>(InviteDetailFragment.ARG_INVITE)
+      arguments.putParcelable(InviteDetailFragment.ARG_INVITE, inviteParcel)
+
       val fragment = InviteDetailFragment()
       fragment.arguments = arguments
       supportFragmentManager.beginTransaction().add(R.id.invite_detail_container, fragment).commit()

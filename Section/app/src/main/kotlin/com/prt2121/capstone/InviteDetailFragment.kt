@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.bindView
+import com.invite.Invite
+import com.invite.InviteParcel
 import com.prt2121.capstone.data.InviteProvider
 import org.funktionale.option.Option
 import org.funktionale.option.Option.None
@@ -30,18 +32,25 @@ class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     else None
   }
 
+  private val invite: Option<Invite> by lazy {
+    if (arguments.containsKey(ARG_INVITE)) arguments.getParcelable<InviteParcel>(InviteDetailFragment.ARG_INVITE).toOption().map { it.contents }
+    else None
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
-    loaderManager.initLoader(DETAIL_LOADER, null, this)
+    if(invite.isEmpty()) {
+      loaderManager.initLoader(DETAIL_LOADER, null, this)
+    }
+
     super.onActivityCreated(savedInstanceState)
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    return inflater!!.inflate(R.layout.invite_detail, container, false)
-  }
+  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+          inflater!!.inflate(R.layout.invite_detail, container, false)
 
   override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? =
       uri.map {
@@ -60,6 +69,7 @@ class InviteDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
 
   companion object {
     const val ARG_INVITE_URI = "invite_uri"
+    const val ARG_INVITE = "invite_extra"
     const val DETAIL_LOADER = 0
   }
 }

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import butterknife.bindView
 import com.invite.Invite
+import com.invite.InviteParcel
 import com.prt2121.capstone.data.InviteEntry
 import com.prt2121.capstone.data.InviteProvider
 import com.prt2121.capstone.sync.InviteSyncAdapter
@@ -44,7 +45,7 @@ class InviteListActivity : AppCompatActivity(), InviteAdapter.ClickListener, Loa
       println("invite uri ${uri.toString()} ${invite.from.phoneNumber}")
       val intent = Intent(this, InviteDetailActivity::class.java)
       intent.putExtra(InviteDetailFragment.ARG_INVITE_URI, uri)
-      //intent.putExtra("invite_extra", InviteParcel.)
+      intent.putExtra(InviteDetailFragment.ARG_INVITE, InviteParcel.wrap(invite))
       startActivity(intent)
     }
   }
